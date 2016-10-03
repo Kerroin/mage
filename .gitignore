@@ -125,3 +125,4 @@ Mage.Client/serverlist.txt
 client_secrets.json
 
 dependency-reduced-pom.xml
+*.dck
