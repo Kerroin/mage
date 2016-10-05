@@ -166,7 +166,6 @@ public interface MageServer {
     GameView getGameView(UUID gameId, String sessionId, UUID playerId) throws MageException;
 
     // priority, undo, concede, mana pool
-
     void sendPlayerAction(PlayerAction playerAction, UUID gameId, String sessionId, Object data) throws MageException;
 
     //tournament methods
@@ -213,6 +212,12 @@ public interface MageServer {
     void disconnectUser(String sessionId, String userSessionId) throws MageException;
 
     void endUserSession(String sessionId, String userSessionId) throws MageException;
+
+    void muteUser(String sessionId, String userName, long durationMinutes) throws MageException;
+
+    void lockUser(String sessionId, String userName, long durationMinutes) throws MageException;
+
+    void toggleActivation(String sessionId, String userName) throws MageException;
 
     void removeTable(String sessionId, UUID tableId) throws MageException;
 

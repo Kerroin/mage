@@ -29,6 +29,8 @@ package mage.server;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -36,6 +38,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
+import javax.management.timer.Timer;
 import mage.MageException;
 import mage.cards.decks.DeckCardLists;
 import mage.cards.repository.CardInfo;
@@ -72,6 +75,7 @@ import mage.server.tournament.TournamentFactory;
 import mage.server.tournament.TournamentManager;
 import mage.server.util.ConfigSettings;
 import mage.server.util.ServerMessagesUtil;
+import mage.server.util.SystemUtil;
 import mage.server.util.ThreadExecutor;
 import mage.utils.ActionWithBooleanResult;
 import mage.utils.ActionWithNullNegativeResult;
@@ -533,7 +537,7 @@ public class MageServerImpl implements MageServer {
                     new Runnable() {
                 @Override
                 public void run() {
-                    ChatManager.getInstance().broadcast(chatId, userName, StringEscapeUtils.escapeHtml4(message), MessageColor.BLUE);
+                    ChatManager.getInstance().broadcast(chatId, userName, StringEscapeUtils.escapeHtml4(message), MessageColor.BLUE, true, ChatMessage.MessageType.TALK, null);
                 }
             }
             );
@@ -1062,8 +1066,15 @@ public class MageServerImpl implements MageServer {
             public List<UserView> execute() throws MageException {
                 List<UserView> users = new ArrayList<>();
                 for (User user : UserManager.getInstance().getUsers()) {
-
-                    users.add(new UserView(user.getName(), user.getHost(), user.getSessionId(), user.getConnectionTime(), user.getGameInfo()));
+                    users.add(new UserView(
+                            user.getName(),
+                            user.getHost(),
+                            user.getSessionId(),
+                            user.getConnectionTime(),
+                            user.getGameInfo(),
+                            user.getUserState().toString(),
+                            user.getChatLockedUntil()
+                    ));
                 }
                 return users;
             }
@@ -1076,6 +1087,52 @@ public class MageServerImpl implements MageServer {
             @Override
             public void execute() {
                 SessionManager.getInstance().disconnectUser(sessionId, userSessionId);
+            }
+        });
+    }
+
+    @Override
+    public void muteUser(final String sessionId, final String userName, final long durationMinutes) throws MageException {
+        execute("muteUser", sessionId, new Action() {
+            @Override
+            public void execute() {
+                User user = UserManager.getInstance().getUserByName(userName);
+                if (user != null) {
+                    Date muteUntil = new Date(Calendar.getInstance().getTimeInMillis() + (durationMinutes * Timer.ONE_MINUTE));
+                    user.showUserMessage("Admin info", "You were muted for chat messages until " + SystemUtil.dateFormat.format(muteUntil) + ".");
+                    user.setChatLockedUntil(muteUntil);
+                }
+
+            }
+        });
+    }
+
+    @Override
+    public void lockUser(String sessionId, final String userName, final long durationMinutes) throws MageException {
+        execute("muteUser", sessionId, new Action() {
+            @Override
+            public void execute() {
+                User user = UserManager.getInstance().getUserByName(userName);
+                if (user != null) {
+                    Date lockUntil = new Date(Calendar.getInstance().getTimeInMillis() + (durationMinutes * Timer.ONE_MINUTE));
+                    user.showUserMessage("Admin info", "Your user profile was locked until " + SystemUtil.dateFormat.format(lockUntil) + ".");
+                    user.setLockedUntil(lockUntil);
+                }
+
+            }
+        });
+    }
+
+    @Override
+    public void toggleActivation(String sessionId, final String userName) throws MageException {
+        execute("muteUser", sessionId, new Action() {
+            @Override
+            public void execute() {
+                User user = UserManager.getInstance().getUserByName(userName);
+                if (user != null) {
+                    user.setActive(!user.isActive());
+                }
+
             }
         });
     }
