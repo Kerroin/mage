@@ -38,7 +38,7 @@ import mage.abilities.AbilitiesImpl;
 import mage.abilities.Ability;
 import mage.abilities.PlayLandAbility;
 import mage.abilities.SpellAbility;
-import mage.abilities.mana.ManaAbility;
+import mage.abilities.mana.ActivatedManaAbilityImpl;
 import mage.cards.repository.PluginClassloaderRegistery;
 import mage.constants.CardType;
 import mage.constants.ColoredManaSymbol;
@@ -190,7 +190,6 @@ public abstract class CardImpl extends MageObjectImpl implements Card {
                 Constructor<?> con = clazz.getConstructor(UUID.class, CardSetInfo.class);
                 card = (Card) con.newInstance(null, setInfo);
             }
-            card.build();
             return card;
         } catch (Exception e) {
             logger.fatal("Error loading card: " + clazz.getCanonicalName(), e);
@@ -342,7 +341,7 @@ public abstract class CardImpl extends MageObjectImpl implements Card {
     @Override
     public List<Mana> getMana() {
         List<Mana> mana = new ArrayList<>();
-        for (ManaAbility ability : this.abilities.getManaAbilities(Zone.BATTLEFIELD)) {
+        for (ActivatedManaAbilityImpl ability : this.abilities.getActivatedManaAbilities(Zone.BATTLEFIELD)) {
             for (Mana netMana : ability.getNetMana(null)) {
                 mana.add(netMana);
             }
@@ -595,10 +594,6 @@ public abstract class CardImpl extends MageObjectImpl implements Card {
     @Override
     public boolean isSplitCard() {
         return splitCard;
-    }
-
-    @Override
-    public void build() {
     }
 
     @Override

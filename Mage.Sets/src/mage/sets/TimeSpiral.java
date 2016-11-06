@@ -86,6 +86,7 @@ public class TimeSpiral extends ExpansionSet {
         cards.add(new SetCardInfo("Errant Doomsayers", 15, Rarity.COMMON, mage.cards.e.ErrantDoomsayers.class));
         cards.add(new SetCardInfo("Errant Ephemeron", 60, Rarity.COMMON, mage.cards.e.ErrantEphemeron.class));
         cards.add(new SetCardInfo("Eternity Snare", 61, Rarity.COMMON, mage.cards.e.EternitySnare.class));
+        cards.add(new SetCardInfo("Evangelize", 16, Rarity.RARE, mage.cards.e.Evangelize.class));
         cards.add(new SetCardInfo("Evil Eye of Urborg", 107, Rarity.UNCOMMON, mage.cards.e.EvilEyeOfUrborg.class));
         cards.add(new SetCardInfo("Faceless Devourer", 108, Rarity.UNCOMMON, mage.cards.f.FacelessDevourer.class));
         cards.add(new SetCardInfo("Fallen Ideal", 109, Rarity.UNCOMMON, mage.cards.f.FallenIdeal.class));
@@ -157,6 +158,7 @@ public class TimeSpiral extends ExpansionSet {
         cards.add(new SetCardInfo("Lotus Bloom", 259, Rarity.RARE, mage.cards.l.LotusBloom.class));
         cards.add(new SetCardInfo("Magus of the Candelabra", 203, Rarity.RARE, mage.cards.m.MagusOfTheCandelabra.class));
         cards.add(new SetCardInfo("Magus of the Disk", 27, Rarity.RARE, mage.cards.m.MagusOfTheDisk.class));
+        cards.add(new SetCardInfo("Magus of the Jar", 67, Rarity.RARE, mage.cards.m.MagusOfTheJar.class));
         cards.add(new SetCardInfo("Magus of the Mirror", 116, Rarity.RARE, mage.cards.m.MagusOfTheMirror.class));
         cards.add(new SetCardInfo("Magus of the Scroll", 169, Rarity.RARE, mage.cards.m.MagusOfTheScroll.class));
         cards.add(new SetCardInfo("Mana Skimmer", 117, Rarity.COMMON, mage.cards.m.ManaSkimmer.class));
