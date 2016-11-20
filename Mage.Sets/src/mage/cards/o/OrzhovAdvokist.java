@@ -43,7 +43,7 @@ import mage.constants.TargetController;
 import mage.counters.CounterType;
 import mage.filter.common.FilterControlledCreaturePermanent;
 import mage.filter.common.FilterCreaturePermanent;
-import mage.filter.predicate.other.PlayerIdPredicate;
+import mage.filter.predicate.permanent.ControllerIdPredicate;
 import mage.game.Game;
 import mage.game.permanent.Permanent;
 import mage.players.Player;
@@ -109,10 +109,6 @@ class OrzhovAdvokistEffect extends OneShotEffect {
                         if (player.choose(outcome, target, playerId, game)) {
                             creatures.add(target.getFirstTarget());
                             players.add(player.getId());
-                            Permanent creature = game.getPermanent(target.getFirstTarget());
-                            if (creature != null) {
-                                creature.addCounters(CounterType.P1P1.createInstance(2), game);
-                            }
                         }
 
                     }
@@ -126,7 +122,7 @@ class OrzhovAdvokistEffect extends OneShotEffect {
             }
             for (UUID playerId : players) {
                 FilterCreaturePermanent filter = new FilterCreaturePermanent();
-                filter.add(new PlayerIdPredicate(playerId));
+                filter.add(new ControllerIdPredicate(playerId));
                 game.addEffect(new CantAttackYouAllEffect(Duration.UntilYourNextTurn, filter, true), source);
             }
             return true;
