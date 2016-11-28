@@ -67,6 +67,7 @@ public class LimitedEditionAlpha extends ExpansionSet {
         cards.add(new SetCardInfo("Copy Artifact", 54, Rarity.RARE, mage.cards.c.CopyArtifact.class));
         cards.add(new SetCardInfo("Counterspell", 55, Rarity.UNCOMMON, mage.cards.c.Counterspell.class));
         cards.add(new SetCardInfo("Craw Wurm", 99, Rarity.COMMON, mage.cards.c.CrawWurm.class));
+        cards.add(new SetCardInfo("Creature Bond", 56, Rarity.COMMON, mage.cards.c.CreatureBond.class));
         cards.add(new SetCardInfo("Crusade", 200, Rarity.RARE, mage.cards.c.Crusade.class));
         cards.add(new SetCardInfo("Crystal Rod", 239, Rarity.UNCOMMON, mage.cards.c.CrystalRod.class));
         cards.add(new SetCardInfo("Cursed Land", 6, Rarity.UNCOMMON, mage.cards.c.CursedLand.class));
@@ -266,6 +267,7 @@ public class LimitedEditionAlpha extends ExpansionSet {
         cards.add(new SetCardInfo("Uthden Troll", 181, Rarity.UNCOMMON, mage.cards.u.UthdenTroll.class));
         cards.add(new SetCardInfo("Verduran Enchantress", 131, Rarity.RARE, mage.cards.v.VerduranEnchantress.class));
         cards.add(new SetCardInfo("Vesuvan Doppelganger", 88, Rarity.RARE, mage.cards.v.VesuvanDoppelganger.class));
+        cards.add(new SetCardInfo("Veteran Bodyguard", 225, Rarity.RARE, mage.cards.v.VeteranBodyguard.class));
         cards.add(new SetCardInfo("Volcanic Eruption", 89, Rarity.RARE, mage.cards.v.VolcanicEruption.class));
         cards.add(new SetCardInfo("Wall of Air", 90, Rarity.UNCOMMON, mage.cards.w.WallOfAir.class));
         cards.add(new SetCardInfo("Wall of Bone", 41, Rarity.UNCOMMON, mage.cards.w.WallOfBone.class));

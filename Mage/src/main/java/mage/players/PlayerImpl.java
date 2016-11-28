@@ -1829,6 +1829,9 @@ public abstract class PlayerImpl implements Player, Serializable {
                     if (sourceAbilities != null && sourceAbilities.containsKey(InfectAbility.getInstance().getId())) {
                         addCounters(CounterType.POISON.createInstance(actualDamage), game);
                     } else {
+                        if (getId().equals(game.getMonarchId()) && sourceControllerId != null) {
+                            game.setMonarchId(null, sourceControllerId);
+                        }
                         GameEvent damageToLifeLossEvent = new GameEvent(EventType.DAMAGE_CAUSES_LIFE_LOSS, playerId, sourceId, playerId, actualDamage, combatDamage);
                         if (!game.replaceEvent(damageToLifeLossEvent)) {
                             this.loseLife(damageToLifeLossEvent.getAmount(), game, combatDamage);
@@ -1877,7 +1880,9 @@ public abstract class PlayerImpl implements Player, Serializable {
     @Override
     public void removeCounters(String name, int amount, Ability source, Game game) {
         for (int i = 0; i < amount; i++) {
-            counters.removeCounter(name, 1);
+            if (!counters.removeCounter(name, 1)) {
+                break;
+            }
             GameEvent event = GameEvent.getEvent(GameEvent.EventType.COUNTER_REMOVED,
                     getId(), (source == null ? null : source.getSourceId()), (source == null ? null : source.getControllerId()));
             event.setData(name);

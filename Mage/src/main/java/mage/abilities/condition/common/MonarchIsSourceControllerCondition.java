@@ -8,23 +8,26 @@ package mage.abilities.condition.common;
 import mage.abilities.Ability;
 import mage.abilities.condition.Condition;
 import mage.game.Game;
-import mage.game.permanent.Permanent;
 
 /**
  *
- * @author anonymous
+ * @author LevelX2
  */
-public class AttackingCondition implements Condition {
+public class MonarchIsSourceControllerCondition implements Condition {
 
-    private static final AttachedCondition fInstance = new AttachedCondition();
+    private final static MonarchIsSourceControllerCondition fInstance = new MonarchIsSourceControllerCondition();
 
-    public static AttachedCondition getInstance() {
+    public static Condition getInstance() {
         return fInstance;
     }
 
     @Override
     public boolean apply(Game game, Ability source) {
-        Permanent permanent = game.getPermanent(source.getSourceId());
-        return permanent != null && permanent.isAttacking();
+        return source.getControllerId().equals(game.getMonarchId());
+    }
+
+    @Override
+    public String toString() {
+        return "if you're the monarch";
     }
 }

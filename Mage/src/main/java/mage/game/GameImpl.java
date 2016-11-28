@@ -759,14 +759,18 @@ public abstract class GameImpl implements Game, Serializable {
             Player playerByOrder = getPlayer(playerList.get());
             state.setPlayerByOrderId(playerByOrder.getId());
             while (!isPaused() && !gameOver(null)) {
-                playExtraTurns();
+                if (!playExtraTurns()) {
+                    break;
+                }
                 GameEvent event = new GameEvent(GameEvent.EventType.PLAY_TURN, null, null, playerByOrder.getId());
                 if (!replaceEvent(event)) {
                     if (!playTurn(playerByOrder)) {
                         break;
                     }
                 }
-                playExtraTurns();
+                if (!playExtraTurns()) {
+                    break;
+                }
                 playerByOrder = playerList.getNext(this);
                 state.setPlayerByOrderId(playerByOrder.getId());
             }
@@ -792,7 +796,7 @@ public abstract class GameImpl implements Game, Serializable {
         }
     }
 
-    private void playExtraTurns() {
+    private boolean playExtraTurns() {
         //20091005 - 500.7
         TurnMod extraTurn = getNextExtraTurn();
         while (extraTurn != null) {
@@ -805,14 +809,16 @@ public abstract class GameImpl implements Game, Serializable {
                     if (!this.isSimulation()) {
                         informPlayers(extraPlayer.getLogName() + " takes an extra turn");
                     }
-                    playTurn(extraPlayer);
+                    if (!playTurn(extraPlayer)) {
+                        return false;
+                    }
                 }
             }
             extraTurn = getNextExtraTurn();
         }
         state.setTurnId(null);
         state.setExtraTurn(false);
-
+        return true;
     }
 
     private TurnMod getNextExtraTurn() {
@@ -2275,7 +2281,7 @@ public abstract class GameImpl implements Game, Serializable {
      *
      * @param playerId
      */
-    protected void leave(UUID playerId) {
+    protected void leave(UUID playerId) { // needs to be executed from the game thread, not from the concede thread of conceding player!
 
         Player player = getPlayer(playerId);
         if (player == null || player.hasLeft()) {
@@ -2342,7 +2348,18 @@ public abstract class GameImpl implements Game, Serializable {
                 it.remove();
             }
         }
-
+        // If the current monarch leaves the game. When that happens, the player whose turn it is becomes the monarch.
+        // If the monarch leaves the game on their turn, the next player in turn order becomes the monarch.
+        if (playerId.equals(getMonarchId())) {
+            if (!getActivePlayerId().equals(playerId)) {
+                setMonarchId(null, getActivePlayerId());
+            } else {
+                Player nextPlayer = getPlayerList().getNext(this);
+                if (nextPlayer != null) {
+                    setMonarchId(null, nextPlayer.getId());
+                }
+            }
+        }
         // 801.2c The particular players within each player‘s range of influence are determined as each turn begins.
         // So no update of range if influence yet
     }
@@ -2890,4 +2907,20 @@ public abstract class GameImpl implements Game, Serializable {
         }
         return options;
     }
+
+    @Override
+    public UUID getMonarchId() {
+        return getState().getMonarchId();
+    }
+
+    @Override
+    public void setMonarchId(Ability source, UUID monarchId) {
+        Player newMonarch = getPlayer(monarchId);
+        if (newMonarch != null) {
+            getState().setMonarchId(monarchId);
+            informPlayers(newMonarch.getLogName() + " is the monarch");
+            fireEvent(new GameEvent(GameEvent.EventType.BECOMES_MONARCH, monarchId, source == null ? null : source.getSourceId(), monarchId));
+        }
+    }
+
 }
