@@ -65,6 +65,7 @@ public class MastersEditionIV extends ExpansionSet {
         cards.add(new SetCardInfo("Ali from Cairo", 107, Rarity.RARE, mage.cards.a.AliFromCairo.class));
         cards.add(new SetCardInfo("Alluring Scent", 141, Rarity.COMMON, mage.cards.a.AlluringScent.class));
         cards.add(new SetCardInfo("Amulet of Kroog", 179, Rarity.COMMON, mage.cards.a.AmuletOfKroog.class));
+        cards.add(new SetCardInfo("Animate Artifact", 38, Rarity.UNCOMMON, mage.cards.a.AnimateArtifact.class));
         cards.add(new SetCardInfo("Argivian Blacksmith", 4, Rarity.UNCOMMON, mage.cards.a.ArgivianBlacksmith.class));
         cards.add(new SetCardInfo("Argothian Pixies", 142, Rarity.COMMON, mage.cards.a.ArgothianPixies.class));
         cards.add(new SetCardInfo("Argothian Treefolk", 143, Rarity.UNCOMMON, mage.cards.a.ArgothianTreefolk.class));
@@ -197,6 +198,7 @@ public class MastersEditionIV extends ExpansionSet {
         cards.add(new SetCardInfo("Overwhelming Forces", 92, Rarity.RARE, mage.cards.o.OverwhelmingForces.class));
         cards.add(new SetCardInfo("Owl Familiar", 54, Rarity.COMMON, mage.cards.o.OwlFamiliar.class));
         cards.add(new SetCardInfo("Pentagram of the Ages", 220, Rarity.UNCOMMON, mage.cards.p.PentagramOfTheAges.class));
+        cards.add(new SetCardInfo("Personal Incarnation", 22, Rarity.RARE, mage.cards.p.PersonalIncarnation.class));
         cards.add(new SetCardInfo("Phantasmal Forces", 55, Rarity.COMMON, mage.cards.p.PhantasmalForces.class));
         cards.add(new SetCardInfo("Phantasmal Terrain", 56, Rarity.COMMON, mage.cards.p.PhantasmalTerrain.class));
         cards.add(new SetCardInfo("Planar Gate", 221, Rarity.UNCOMMON, mage.cards.p.PlanarGate.class));

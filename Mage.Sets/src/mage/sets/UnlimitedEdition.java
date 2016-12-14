@@ -27,6 +27,7 @@ public class UnlimitedEdition extends ExpansionSet {
         this.ratioBoosterMythic = 0;
         cards.add(new SetCardInfo("Air Elemental", 47, Rarity.UNCOMMON, mage.cards.a.AirElemental.class));
         cards.add(new SetCardInfo("Ancestral Recall", 48, Rarity.RARE, mage.cards.a.AncestralRecall.class));
+        cards.add(new SetCardInfo("Animate Artifact", 49, Rarity.UNCOMMON, mage.cards.a.AnimateArtifact.class));
         cards.add(new SetCardInfo("Animate Dead", 1, Rarity.UNCOMMON, mage.cards.a.AnimateDead.class));
         cards.add(new SetCardInfo("Animate Wall", 185, Rarity.RARE, mage.cards.a.AnimateWall.class));
         cards.add(new SetCardInfo("Ankh of Mishra", 231, Rarity.RARE, mage.cards.a.AnkhOfMishra.class));
@@ -61,6 +62,7 @@ public class UnlimitedEdition extends ExpansionSet {
         cards.add(new SetCardInfo("Clockwork Beast", 237, Rarity.RARE, mage.cards.c.ClockworkBeast.class));
         cards.add(new SetCardInfo("Clone", 52, Rarity.UNCOMMON, mage.cards.c.Clone.class));
         cards.add(new SetCardInfo("Cockatrice", 98, Rarity.RARE, mage.cards.c.Cockatrice.class));
+        cards.add(new SetCardInfo("Consecrate Land", 199, Rarity.UNCOMMON, mage.cards.c.ConsecrateLand.class));
         cards.add(new SetCardInfo("Conservator", 238, Rarity.UNCOMMON, mage.cards.c.Conservator.class));
         cards.add(new SetCardInfo("Control Magic", 53, Rarity.UNCOMMON, mage.cards.c.ControlMagic.class));
         cards.add(new SetCardInfo("Conversion", 200, Rarity.UNCOMMON, mage.cards.c.Conversion.class));
@@ -185,6 +187,7 @@ public class UnlimitedEdition extends ExpansionSet {
         cards.add(new SetCardInfo("Mox Sapphire", 266, Rarity.RARE, mage.cards.m.MoxSapphire.class));
         cards.add(new SetCardInfo("Natural Selection", 121, Rarity.RARE, mage.cards.n.NaturalSelection.class));
         cards.add(new SetCardInfo("Nether Shadow", 25, Rarity.RARE, mage.cards.n.NetherShadow.class));
+        cards.add(new SetCardInfo("Nettling Imp", 26, Rarity.UNCOMMON, mage.cards.n.NettlingImp.class));
         cards.add(new SetCardInfo("Nevinyrral's Disk", 267, Rarity.RARE, mage.cards.n.NevinyrralsDisk.class));
         cards.add(new SetCardInfo("Nightmare", 27, Rarity.RARE, mage.cards.n.Nightmare.class));
         cards.add(new SetCardInfo("Northern Paladin", 214, Rarity.RARE, mage.cards.n.NorthernPaladin.class));
@@ -193,6 +196,7 @@ public class UnlimitedEdition extends ExpansionSet {
         cards.add(new SetCardInfo("Orcish Oriflamme", 167, Rarity.UNCOMMON, mage.cards.o.OrcishOriflamme.class));
         cards.add(new SetCardInfo("Paralyze", 28, Rarity.COMMON, mage.cards.p.Paralyze.class));
         cards.add(new SetCardInfo("Pearled Unicorn", 215, Rarity.COMMON, mage.cards.p.PearledUnicorn.class));
+        cards.add(new SetCardInfo("Personal Incarnation", 216, Rarity.RARE, mage.cards.p.PersonalIncarnation.class));
         cards.add(new SetCardInfo("Pestilence", 29, Rarity.COMMON, mage.cards.p.Pestilence.class));
         cards.add(new SetCardInfo("Phantasmal Forces", 68, Rarity.UNCOMMON, mage.cards.p.PhantasmalForces.class));
         cards.add(new SetCardInfo("Phantasmal Terrain", 69, Rarity.COMMON, mage.cards.p.PhantasmalTerrain.class));
@@ -204,6 +208,7 @@ public class UnlimitedEdition extends ExpansionSet {
         cards.add(new SetCardInfo("Plains", 291, Rarity.LAND, mage.cards.basiclands.Plains.class, new CardGraphicInfo(null, true)));
         cards.add(new SetCardInfo("Plateau", 292, Rarity.RARE, mage.cards.p.Plateau.class));
         cards.add(new SetCardInfo("Power Sink", 73, Rarity.COMMON, mage.cards.p.PowerSink.class));
+        cards.add(new SetCardInfo("Power Surge", 168, Rarity.RARE, mage.cards.p.PowerSurge.class));
         cards.add(new SetCardInfo("Prodigal Sorcerer", 74, Rarity.COMMON, mage.cards.p.ProdigalSorcerer.class));
         cards.add(new SetCardInfo("Psionic Blast", 75, Rarity.UNCOMMON, mage.cards.p.PsionicBlast.class));
         cards.add(new SetCardInfo("Psychic Venom", 76, Rarity.COMMON, mage.cards.p.PsychicVenom.class));
@@ -235,6 +240,7 @@ public class UnlimitedEdition extends ExpansionSet {
         cards.add(new SetCardInfo("Shanodin Dryads", 125, Rarity.COMMON, mage.cards.s.ShanodinDryads.class));
         cards.add(new SetCardInfo("Shatter", 174, Rarity.COMMON, mage.cards.s.Shatter.class));
         cards.add(new SetCardInfo("Shivan Dragon", 175, Rarity.RARE, mage.cards.s.ShivanDragon.class));
+        cards.add(new SetCardInfo("Simulacrum", 37, Rarity.UNCOMMON, mage.cards.s.Simulacrum.class));
         cards.add(new SetCardInfo("Sinkhole", 38, Rarity.COMMON, mage.cards.s.Sinkhole.class));
         cards.add(new SetCardInfo("Siren's Call", 78, Rarity.UNCOMMON, mage.cards.s.SirensCall.class));
         cards.add(new SetCardInfo("Smoke", 176, Rarity.RARE, mage.cards.s.Smoke.class));
