@@ -149,6 +149,8 @@ public interface Permanent extends Card, Controllable {
 
     void reset(Game game);
 
+    MageObject getBasicMageObject(Game game);
+
     boolean destroy(UUID sourceId, Game game, boolean noRegen);
 
     boolean sacrifice(UUID sourceId, Game game);
@@ -174,7 +176,7 @@ public interface Permanent extends Card, Controllable {
 
     boolean canLoyaltyBeUsed(Game game);
 
-    public void resetControl();
+    void resetControl();
 
     boolean changeControllerId(UUID controllerId, Game game);
 

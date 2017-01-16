@@ -74,7 +74,7 @@ public class Library implements Serializable {
     public void shuffle() {
         UUID[] shuffled = library.toArray(new UUID[0]);
         for (int n = shuffled.length - 1; n > 0; n--) {
-            int r = RandomUtil.nextInt(n);;
+            int r = RandomUtil.nextInt(n);
             UUID temp = shuffled[n];
             shuffled[n] = shuffled[r];
             shuffled[r] = temp;
@@ -208,9 +208,7 @@ public class Library implements Serializable {
         Map<String, Card> cards = new HashMap<>();
         for (UUID cardId : library) {
             Card card = game.getCard(cardId);
-            if (!cards.containsKey(card.getName())) {
-                cards.put(card.getName(), card);
-            }
+            cards.putIfAbsent(card.getName(), card);
         }
         return cards.values();
     }

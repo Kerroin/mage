@@ -49,7 +49,6 @@ import mage.constants.Zone;
 import mage.counters.Counter;
 import mage.counters.Counters;
 import mage.game.*;
-import mage.game.command.Commander;
 import mage.game.events.GameEvent;
 import mage.game.events.ZoneChangeEvent;
 import mage.game.permanent.Permanent;
@@ -462,9 +461,9 @@ public abstract class CardImpl extends MageObjectImpl implements Card {
                 }
                 break;
             case COMMAND:
-                lkiObject = (Commander) game.getObject(objectId);
+                lkiObject = game.getObject(objectId);
                 if (lkiObject != null) {
-                    removed = game.getState().getCommand().remove((Commander) game.getObject(objectId));
+                    removed = game.getState().getCommand().remove(game.getObject(objectId));
                 }
                 break;
             case OUTSIDE:
@@ -502,7 +501,7 @@ public abstract class CardImpl extends MageObjectImpl implements Card {
         Counters countersToAdd = game.getEnterWithCounters(permanent.getId());
         if (countersToAdd != null) {
             for (Counter counter : countersToAdd.values()) {
-                permanent.addCounters(counter, game);
+                permanent.addCounters(counter, null, game);
             }
             game.setEnterWithCounters(permanent.getId(), null);
         }
@@ -619,14 +618,15 @@ public abstract class CardImpl extends MageObjectImpl implements Card {
     }
 
     @Override
-    public boolean addCounters(Counter counter, Game game) {
-        return addCounters(counter, game, null);
+    public boolean addCounters(Counter counter, Ability source, Game game) {
+        return addCounters(counter, source, game, null);
     }
 
     @Override
-    public boolean addCounters(Counter counter, Game game, ArrayList<UUID> appliedEffects) {
+    public boolean addCounters(Counter counter, Ability source, Game game, ArrayList<UUID> appliedEffects) {
         boolean returnCode = true;
-        GameEvent countersEvent = GameEvent.getEvent(GameEvent.EventType.ADD_COUNTERS, objectId, getControllerOrOwner(), counter.getName(), counter.getCount());
+        UUID sourceId = (source == null ? null : source.getSourceId());
+        GameEvent countersEvent = GameEvent.getEvent(GameEvent.EventType.ADD_COUNTERS, objectId, sourceId, getControllerOrOwner(), counter.getName(), counter.getCount());
         countersEvent.setAppliedEffects(appliedEffects);
         if (!game.replaceEvent(countersEvent)) {
             int amount = countersEvent.getAmount();
@@ -634,18 +634,18 @@ public abstract class CardImpl extends MageObjectImpl implements Card {
             for (int i = 0; i < amount; i++) {
                 Counter eventCounter = counter.copy();
                 eventCounter.remove(eventCounter.getCount() - 1);
-                GameEvent event = GameEvent.getEvent(GameEvent.EventType.ADD_COUNTER, objectId, getControllerOrOwner(), counter.getName(), 1);
+                GameEvent event = GameEvent.getEvent(GameEvent.EventType.ADD_COUNTER, objectId, sourceId, getControllerOrOwner(), counter.getName(), 1);
                 event.setAppliedEffects(appliedEffects);
                 if (!game.replaceEvent(event)) {
                     getCounters(game).addCounter(eventCounter);
-                    game.fireEvent(GameEvent.getEvent(GameEvent.EventType.COUNTER_ADDED, objectId, getControllerOrOwner(), counter.getName(), 1));
+                    game.fireEvent(GameEvent.getEvent(GameEvent.EventType.COUNTER_ADDED, objectId, sourceId, getControllerOrOwner(), counter.getName(), 1));
                 } else {
                     finalAmount--;
                     returnCode = false;
                 }
             }
             if (finalAmount > 0) {
-                game.fireEvent(GameEvent.getEvent(GameEvent.EventType.COUNTERS_ADDED, objectId, getControllerOrOwner(), counter.getName(), amount));
+                game.fireEvent(GameEvent.getEvent(GameEvent.EventType.COUNTERS_ADDED, objectId, sourceId, getControllerOrOwner(), counter.getName(), amount));
             }
         } else {
             returnCode = false;

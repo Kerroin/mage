@@ -24,8 +24,7 @@
 * The views and conclusions contained in the software and documentation are those of the
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of BetaSteward_at_googlemail.com.
-*/
-
+ */
 package mage.target.common;
 
 import java.util.HashSet;
@@ -60,6 +59,7 @@ public class TargetCardInHand extends TargetCard {
 
     public TargetCardInHand(int minNumTargets, int maxNumTargets, FilterCard filter) {
         super(minNumTargets, maxNumTargets, Zone.HAND, filter);
+        setNotTarget(true);
     }
 
     public TargetCardInHand(final TargetCardInHand target) {
@@ -69,10 +69,7 @@ public class TargetCardInHand extends TargetCard {
     @Override
     public boolean canTarget(UUID playerId, UUID id, Ability source, Game game) {
         Card card = game.getPlayer(playerId).getHand().get(id, game);
-        if (card != null) {
-            return filter.match(card, source.getSourceId(), playerId, game);
-        }
-        return false;
+        return card != null && filter.match(card, source.getSourceId(), playerId, game);
     }
 
     @Override

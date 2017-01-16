@@ -229,7 +229,10 @@ public class GameEvent implements Serializable {
         PAID_CUMULATIVE_UPKEEP,
         DIDNT_PAY_CUMULATIVE_UPKEEP,
         //permanent events
-        ENTERS_THE_BATTLEFIELD,
+        ENTERS_THE_BATTLEFIELD_SELF, // 616.1a If any of the replacement and/or prevention effects are self-replacement effects (see rule 614.15), one of them must be chosen. If not, proceed to rule 616.1b.
+        ENTERS_THE_BATTLEFIELD_CONTROL, // 616.1b
+        ENTERS_THE_BATTLEFIELD_COPY, // 616.1c
+        ENTERS_THE_BATTLEFIELD, // 616.1d
         TAP, TAPPED, TAPPED_FOR_MANA,
         UNTAP, UNTAPPED,
         FLIP, FLIPPED,
@@ -302,7 +305,7 @@ public class GameEvent implements Serializable {
         COMBAT_DAMAGE_APPLIED,
         SELECTED_ATTACKER, SELECTED_BLOCKER,
         //custom events
-        CUSTOM_EVENT;
+        CUSTOM_EVENT
     }
 
     private GameEvent(EventType type, UUID customEventType,
@@ -344,8 +347,8 @@ public class GameEvent implements Serializable {
         return new GameEvent(type, targetId, null, playerId);
     }
 
-    public static GameEvent getEvent(EventType type, UUID targetId, UUID playerId, String data, int amount) {
-        GameEvent event = getEvent(type, targetId, playerId);
+    public static GameEvent getEvent(EventType type, UUID targetId, UUID sourceId, UUID playerId, String data, int amount) {
+        GameEvent event = getEvent(type, targetId, sourceId, playerId);
         event.setAmount(amount);
         event.setData(data);
         return event;

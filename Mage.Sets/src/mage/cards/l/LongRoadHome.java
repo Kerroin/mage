@@ -36,7 +36,6 @@ import mage.abilities.effects.ReplacementEffectImpl;
 import mage.cards.Card;
 import mage.cards.CardImpl;
 import mage.cards.CardSetInfo;
-import mage.cards.CardSetInfo;
 import mage.cards.MeldCard;
 import mage.constants.CardType;
 import mage.constants.Duration;
@@ -189,7 +188,7 @@ class LongRoadHomeEntersBattlefieldEffect extends ReplacementEffectImpl {
     public boolean replaceEvent(GameEvent event, Ability source, Game game) {
         Permanent permanent = ((EntersTheBattlefieldEvent) event).getTarget();
         if (permanent != null) {
-            permanent.addCounters(CounterType.P1P1.createInstance(), game);
+            permanent.addCounters(CounterType.P1P1.createInstance(), source, game);
             discard(); // use only once
         }
         return false;

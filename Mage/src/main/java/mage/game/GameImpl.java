@@ -57,6 +57,7 @@ import mage.abilities.effects.ContinuousEffects;
 import mage.abilities.effects.Effect;
 import mage.abilities.effects.PreventionEffectData;
 import mage.abilities.effects.common.CopyEffect;
+import mage.abilities.keyword.BestowAbility;
 import mage.abilities.keyword.MorphAbility;
 import mage.abilities.keyword.TransformAbility;
 import mage.abilities.mana.DelayedTriggeredManaAbility;
@@ -72,6 +73,7 @@ import mage.cards.decks.Deck;
 import mage.choices.Choice;
 import mage.constants.CardType;
 import mage.constants.Duration;
+import mage.constants.Layer;
 import mage.constants.MultiplayerAttackOption;
 import mage.constants.Outcome;
 import mage.constants.PhaseStep;
@@ -108,7 +110,6 @@ import mage.game.events.TableEventSource;
 import mage.game.permanent.Battlefield;
 import mage.game.permanent.Permanent;
 import mage.game.permanent.PermanentCard;
-import mage.game.permanent.PermanentImpl;
 import mage.game.stack.Spell;
 import mage.game.stack.SpellStack;
 import mage.game.stack.StackObject;
@@ -334,7 +335,7 @@ public abstract class GameImpl implements Game, Serializable {
     }
 
     @Override
-    public void addPlayer(Player player, Deck deck) throws GameException {
+    public void addPlayer(Player player, Deck deck) {
         player.useDeck(deck, this);
         state.addPlayer(player);
     }
@@ -1425,19 +1426,21 @@ public abstract class GameImpl implements Game, Serializable {
     }
 
     @Override
-    public void addEmblem(Emblem emblem, Ability source) {
-        addEmblem(emblem, source, null);
+    public void addEmblem(Emblem emblem, MageObject sourceObject, Ability source) {
+        addEmblem(emblem, sourceObject, source.getControllerId());
     }
 
+    /**
+     *
+     * @param emblem
+     * @param sourceObject
+     * @param toPlayerId controller and owner of the emblem
+     */
     @Override
-    public void addEmblem(Emblem emblem, Ability source, UUID toPlayerId) {
+    public void addEmblem(Emblem emblem, MageObject sourceObject, UUID toPlayerId) {
         Emblem newEmblem = emblem.copy();
-        newEmblem.setSourceId(source.getSourceId());
-        if (toPlayerId == null) {
-            newEmblem.setControllerId(source.getControllerId());
-        } else {
-            newEmblem.setControllerId(toPlayerId);
-        }
+        newEmblem.setSourceObject(sourceObject);
+        newEmblem.setControllerId(toPlayerId);
         newEmblem.assignNewId();
         newEmblem.getAbilities().newId();
         for (Ability ability : newEmblem.getAbilities()) {
@@ -1523,6 +1526,11 @@ public abstract class GameImpl implements Game, Serializable {
         return state.copyCard(cardToCopy, source, this);
     }
 
+    /**
+     * For internal use only
+     *
+     * @param ability
+     */
     @Override
     public void addTriggeredAbility(TriggeredAbility ability) {
         if (ability.getControllerId() == null) {
@@ -1780,7 +1788,7 @@ public abstract class GameImpl implements Game, Serializable {
                     }
                 } else {
                     SpellAbility spellAbility = perm.getSpellAbility();
-                    if (perm.getSpellAbility().getTargets().isEmpty()) {
+                    if (spellAbility.getTargets().isEmpty()) {
                         for (Ability ability : perm.getAbilities(this)) {
                             if ((ability instanceof SpellAbility)
                                     && SpellAbilityType.BASE_ALTERNATE.equals(((SpellAbility) ability).getSpellAbilityType())
@@ -1803,6 +1811,7 @@ public abstract class GameImpl implements Game, Serializable {
                                 if (card != null && card.getCardType().contains(CardType.CREATURE)) {
                                     UUID wasAttachedTo = perm.getAttachedTo();
                                     perm.attachTo(null, this);
+                                    BestowAbility.becomeCreature(perm, this);
                                     fireEvent(new GameEvent(GameEvent.EventType.UNATTACHED, wasAttachedTo, perm.getId(), perm.getControllerId()));
                                 } else if (movePermanentToGraveyardWithInfo(perm)) {
                                     somethingHappened = true;
@@ -1830,7 +1839,7 @@ public abstract class GameImpl implements Game, Serializable {
                             }
                         } else if (target instanceof TargetPlayer) {
                             Player attachedToPlayer = getPlayer(perm.getAttachedTo());
-                            if (attachedToPlayer == null) {
+                            if (attachedToPlayer == null || attachedToPlayer.hasLost()) {
                                 if (movePermanentToGraveyardWithInfo(perm)) {
                                     somethingHappened = true;
                                 }
@@ -1929,7 +1938,7 @@ public abstract class GameImpl implements Game, Serializable {
                         Player controller = this.getPlayer(planeswalker.getControllerId());
                         if (controller != null) {
                             Target targetPlaneswalkerToKeep = new TargetPermanent(filterPlaneswalker);
-                            targetPlaneswalkerToKeep.setTargetName(new StringBuilder(planeswalker.getName()).append(" to keep?").toString());
+                            targetPlaneswalkerToKeep.setTargetName(planeswalker.getName() + " to keep?");
                             controller.chooseTarget(Outcome.Benefit, targetPlaneswalkerToKeep, null, this);
                             for (Permanent dupPlaneswalker : this.getBattlefield().getActivePermanents(filterPlaneswalker, planeswalker.getControllerId(), this)) {
                                 if (!targetPlaneswalkerToKeep.getTargets().contains(dupPlaneswalker.getId())) {
@@ -2316,17 +2325,30 @@ public abstract class GameImpl implements Game, Serializable {
                     perm.removeFromCombat(this, true);
                 }
                 it.remove();
+            } else if (perm.getControllerId().equals(player.getId())) {
+                // and any effects which give that player control of any objects or players end
+                Effects:
+                for (ContinuousEffect effect : getContinuousEffects().getLayeredEffects(this)) {
+                    if (effect.hasLayer(Layer.ControlChangingEffects_2)) {
+                        for (Ability ability : getContinuousEffects().getLayeredEffectAbilities(effect)) {
+                            for (Target target : ability.getTargets()) {
+                                for (UUID targetId : target.getTargets()) {
+                                    if (targetId.equals(perm.getId())) {
+                                        effect.discard();
+                                        continue Effects;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
         // Then, if that player controlled any objects on the stack not represented by cards, those objects cease to exist.
         this.getState().getContinuousEffects().removeInactiveEffects(this);
-        for (Iterator<StackObject> it = getStack().iterator(); it.hasNext();) {
-            StackObject object = it.next();
-            if (object.getControllerId().equals(playerId)) {
-                it.remove();
-            }
-        }
+        getStack().removeIf(object -> object.getControllerId().equals(playerId));
         // Then, if there are any objects still controlled by that player, those objects are exiled.
+        applyEffects(); // to remove control from effects removed meanwhile
         List<Permanent> permanents = this.getBattlefield().getAllActivePermanents(playerId);
         for (Permanent permanent : permanents) {
             permanent.moveToExile(null, "", null, this);
@@ -2568,10 +2590,10 @@ public abstract class GameImpl implements Game, Serializable {
             if (object instanceof Permanent) {
                 Map<Integer, MageObject> lkiExtendedMap = lkiExtended.get(objectId);
                 if (lkiExtendedMap != null) {
-                    lkiExtendedMap.put(((Permanent) object).getZoneChangeCounter(this), copy);
+                    lkiExtendedMap.put(object.getZoneChangeCounter(this), copy);
                 } else {
                     lkiExtendedMap = new HashMap<>();
-                    lkiExtendedMap.put(((Permanent) object).getZoneChangeCounter(this), copy);
+                    lkiExtendedMap.put(object.getZoneChangeCounter(this), copy);
                     lkiExtended.put(objectId, lkiExtendedMap);
                 }
             }
@@ -2655,17 +2677,17 @@ public abstract class GameImpl implements Game, Serializable {
                 card.setZone(Zone.GRAVEYARD, this);
                 player.getGraveyard().add(card);
             }
-            for (PermanentCard card : battlefield) {
-                card.setZone(Zone.BATTLEFIELD, this);
-                card.setOwnerId(ownerId);
-                PermanentCard permanent = new PermanentCard(card.getCard(), ownerId, this);
-                getPermanentsEntering().put(permanent.getId(), permanent);
-                permanent.entersBattlefield(permanent.getId(), this, Zone.OUTSIDE, false);
-                getBattlefield().addPermanent(permanent);
-                getPermanentsEntering().remove(permanent.getId());
-                ((PermanentImpl) permanent).removeSummoningSickness();
-                if (card.isTapped()) {
-                    permanent.setTapped(true);
+            for (PermanentCard permanentCard : battlefield) {
+                permanentCard.setZone(Zone.BATTLEFIELD, this);
+                permanentCard.setOwnerId(ownerId);
+                PermanentCard newPermanent = new PermanentCard(permanentCard.getCard(), ownerId, this);
+                getPermanentsEntering().put(newPermanent.getId(), newPermanent);
+                newPermanent.entersBattlefield(newPermanent.getId(), this, Zone.OUTSIDE, false);
+                getBattlefield().addPermanent(newPermanent);
+                getPermanentsEntering().remove(newPermanent.getId());
+                newPermanent.removeSummoningSickness();
+                if (permanentCard.isTapped()) {
+                    newPermanent.setTapped(true);
                 }
             }
             applyEffects();

@@ -34,9 +34,9 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
+
 import mage.MageObject;
 import mage.abilities.Ability;
 import mage.cards.Card;
@@ -50,13 +50,12 @@ import mage.players.Player;
 import mage.util.RandomUtil;
 
 /**
- *
  * @author BetaSteward_at_googlemail.com
  */
 public abstract class TargetImpl implements Target {
 
-    protected Map<UUID, Integer> targets = new LinkedHashMap<>();
-    protected Map<UUID, Integer> zoneChangeCounters = new HashMap<>();
+    protected final Map<UUID, Integer> targets = new LinkedHashMap<>();
+    protected final Map<UUID, Integer> zoneChangeCounters = new HashMap<>();
 
     protected String targetName;
     protected Zone zone;
@@ -185,7 +184,7 @@ public abstract class TargetImpl implements Target {
 
     @Override
     public boolean isRequired(Ability ability) {
-        return ability == null || ability.isActivated() || !(ability.getAbilityType().equals(AbilityType.SPELL) || ability.getAbilityType().equals(AbilityType.ACTIVATED));
+        return ability == null || ability.isActivated() || !(ability.getAbilityType() == AbilityType.SPELL || ability.getAbilityType() == AbilityType.ACTIVATED);
     }
 
     @Override
@@ -199,18 +198,12 @@ public abstract class TargetImpl implements Target {
         if (getMaxNumberOfTargets() == 0 && getNumberOfTargets() == 0) {
             return true;
         }
-        if (getMaxNumberOfTargets() != 0 && targets.size() == getMaxNumberOfTargets()) {
-            return true;
-        }
-        return chosen;
+        return getMaxNumberOfTargets() != 0 && targets.size() == getMaxNumberOfTargets() || chosen;
     }
 
     @Override
     public boolean doneChosing() {
-        if (getMaxNumberOfTargets() == 0) {
-            return false;
-        }
-        return targets.size() == getMaxNumberOfTargets();
+        return getMaxNumberOfTargets() != 0 && targets.size() == getMaxNumberOfTargets();
     }
 
     @Override
@@ -559,6 +552,11 @@ public abstract class TargetImpl implements Target {
     @Override
     public void setTargetTag(int targetTag) {
         this.targetTag = targetTag;
+    }
+
+    @Override
+    public Target getOriginalTarget() {
+        return this;
     }
 
 }

@@ -39,11 +39,7 @@ import com.j256.ormlite.support.DatabaseConnection;
 import com.j256.ormlite.table.TableUtils;
 import java.io.File;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.concurrent.Callable;
 import mage.cards.CardSetInfo;
 import mage.constants.CardType;
@@ -62,14 +58,12 @@ public enum CardRepository {
     private static final String JDBC_URL = "jdbc:h2:file:./db/cards.h2;AUTO_SERVER=TRUE";
     private static final String VERSION_ENTITY_NAME = "card";
     // raise this if db structure was changed
-    private static final long CARD_DB_VERSION = 48;
+    private static final long CARD_DB_VERSION = 50;
     // raise this if new cards were added to the server
-    private static final long CARD_CONTENT_VERSION = 65;
-
+    private static final long CARD_CONTENT_VERSION = 68;
+    private final TreeSet<String> landTypes = new TreeSet();
     private Dao<CardInfo, Object> cardDao;
     private Set<String> classNames;
-
-    private final TreeSet<String> landTypes = new TreeSet();
 
     CardRepository() {
         File file = new File("db");
@@ -283,6 +277,7 @@ public enum CardRepository {
             subtypes.add("Saproling");
             subtypes.add("Scion");
             subtypes.add("Serf");
+            subtypes.add("Servo");
             subtypes.add("Splinter");
             subtypes.add("Survivor");
             subtypes.add("Tetravite");
@@ -315,7 +310,7 @@ public enum CardRepository {
     public CardInfo findCard(String setCode, String cardNumber) {
         try {
             QueryBuilder<CardInfo, Object> queryBuilder = cardDao.queryBuilder();
-            queryBuilder.where().eq("setCode", new SelectArg(setCode)).and().eq("cardNumber", cardNumber).and().eq("nightCard", false);
+            queryBuilder.limit(1L).where().eq("setCode", new SelectArg(setCode)).and().eq("cardNumber", cardNumber).and().eq("nightCard", false);
             List<CardInfo> result = cardDao.query(queryBuilder.prepare());
             if (!result.isEmpty()) {
                 return result.get(0);
@@ -345,7 +340,7 @@ public enum CardRepository {
             return cardDao.query(queryBuilder.prepare());
         } catch (SQLException ex) {
         }
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 
     /**
@@ -398,7 +393,7 @@ public enum CardRepository {
             return cardDao.query(queryBuilder.prepare());
         } catch (SQLException ex) {
         }
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 
     public List<CardInfo> findCardsCaseInsensitive(String name) {
@@ -415,7 +410,7 @@ public enum CardRepository {
         } catch (SQLException ex) {
             Logger.getLogger(CardRepository.class).error("Error during execution of raw sql statement", ex);
         }
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 
     public List<CardInfo> findCards(CardCriteria criteria) {
@@ -427,7 +422,7 @@ public enum CardRepository {
         } catch (SQLException ex) {
             Logger.getLogger(CardRepository.class).error("Error during execution of card repository query statement", ex);
         }
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 
     public long getContentVersionFromDB() {

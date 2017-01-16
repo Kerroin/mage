@@ -159,6 +159,7 @@ public class Legends extends ExpansionSet {
         cards.add(new SetCardInfo("Mana Drain", 65, Rarity.UNCOMMON, mage.cards.m.ManaDrain.class));
         cards.add(new SetCardInfo("Mana Matrix", 230, Rarity.RARE, mage.cards.m.ManaMatrix.class));
         cards.add(new SetCardInfo("Marhault Elsdragon", 284, Rarity.UNCOMMON, mage.cards.m.MarhaultElsdragon.class));
+        cards.add(new SetCardInfo("Mirror Universe", 232, Rarity.RARE, mage.cards.m.MirrorUniverse.class));
         cards.add(new SetCardInfo("Moat", 197, Rarity.RARE, mage.cards.m.Moat.class));
         cards.add(new SetCardInfo("Mold Demon", 26, Rarity.RARE, mage.cards.m.MoldDemon.class));
         cards.add(new SetCardInfo("Moss Monster", 109, Rarity.COMMON, mage.cards.m.MossMonster.class));
@@ -177,6 +178,7 @@ public class Legends extends ExpansionSet {
         cards.add(new SetCardInfo("Presence of the Master", 200, Rarity.UNCOMMON, mage.cards.p.PresenceOfTheMaster.class));
         cards.add(new SetCardInfo("Princess Lucrezia", 289, Rarity.UNCOMMON, mage.cards.p.PrincessLucrezia.class));
         cards.add(new SetCardInfo("Pyrotechnics", 158, Rarity.COMMON, mage.cards.p.Pyrotechnics.class));
+        cards.add(new SetCardInfo("Rabid Wombat", 112, Rarity.UNCOMMON, mage.cards.r.RabidWombat.class));
         cards.add(new SetCardInfo("Radjan Spirit", 113, Rarity.UNCOMMON, mage.cards.r.RadjanSpirit.class));
         cards.add(new SetCardInfo("Raging Bull", 160, Rarity.COMMON, mage.cards.r.RagingBull.class));
         cards.add(new SetCardInfo("Ragnar", 290, Rarity.RARE, mage.cards.r.Ragnar.class));
@@ -231,6 +233,7 @@ public class Legends extends ExpansionSet {
         cards.add(new SetCardInfo("Wall of Earth", 166, Rarity.COMMON, mage.cards.w.WallOfEarth.class));
         cards.add(new SetCardInfo("Wall of Heat", 167, Rarity.COMMON, mage.cards.w.WallOfHeat.class));
         cards.add(new SetCardInfo("Wall of Light", 212, Rarity.UNCOMMON, mage.cards.w.WallOfLight.class));
+        cards.add(new SetCardInfo("Wall of Putrid Flesh", 41, Rarity.UNCOMMON, mage.cards.w.WallOfPutridFlesh.class));
         cards.add(new SetCardInfo("Wall of Wonder", 85, Rarity.UNCOMMON, mage.cards.w.WallOfWonder.class));
         cards.add(new SetCardInfo("Whirling Dervish", 125, Rarity.UNCOMMON, mage.cards.w.WhirlingDervish.class));
         cards.add(new SetCardInfo("Willow Satyr", 126, Rarity.RARE, mage.cards.w.WillowSatyr.class));

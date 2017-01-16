@@ -82,6 +82,7 @@ public enum CounterType {
     M2M1(new BoostCounter(-2, -1).name),
     M2M2(new BoostCounter(-2, -2).name),
     MINING("mining"),
+    MIRE("mire"),
     MUSTER("muster"),
     P0P1(new BoostCounter(0, 1).name),
     P1P0(new BoostCounter(1, 0).name),
@@ -93,6 +94,7 @@ public enum CounterType {
     PETAL("petal"),
     PETRIFICATION("petrification"),
     PLAGUE("plague"),
+    PLOT("plot"),
     POLYP("polyp"),
     POISON("poison"),
     PRESSURE("pressure"),
@@ -113,6 +115,7 @@ public enum CounterType {
     TIME("time"),
     TOWER("tower"),
     TRAP("trap"),
+    UNITY("unity"),
     VELOCITY("velocity"),
     VERSE("verse"),
     VITALITY("vitality"),
@@ -121,7 +124,7 @@ public enum CounterType {
 
     private final String name;
 
-    private CounterType(String name) {
+    CounterType(String name) {
         this.name = name;
     }
 

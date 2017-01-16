@@ -36,7 +36,6 @@ import mage.cards.Card;
 import mage.cards.CardImpl;
 import mage.cards.CardSetInfo;
 import mage.cards.CardsImpl;
-import mage.cards.CardSetInfo;
 import mage.cards.SplitCard;
 import mage.constants.CardType;
 import mage.constants.Outcome;
@@ -63,7 +62,7 @@ import mage.util.CardUtil;
 public class EyeOfTheStorm extends CardImpl {
 
     public EyeOfTheStorm(UUID ownerId, CardSetInfo setInfo) {
-        super(ownerId,setInfo,new CardType[]{CardType.ENCHANTMENT},"{5}{U}{U}");
+        super(ownerId, setInfo, new CardType[]{CardType.ENCHANTMENT}, "{5}{U}{U}");
 
         // Whenever a player casts an instant or sorcery card, exile it. Then that player copies each instant or sorcery card exiled with Eye of the Storm. For each copy, the player may cast the copy without paying its mana cost.
         this.addAbility(new EyeOfTheStormAbility());
@@ -101,15 +100,16 @@ class EyeOfTheStormAbility extends TriggeredAbilityImpl {
 
     @Override
     public boolean checkTrigger(GameEvent event, Game game) {
-        if (event.getZone() == Zone.HAND) {
-            Spell spell = game.getStack().getSpell(event.getTargetId());
-            if (spell != null && !spell.isCopy()
-                    && (spell.getCardType().contains(CardType.INSTANT) || spell.getCardType().contains(CardType.SORCERY))) {
-                for (Effect effect : this.getEffects()) {
-                    effect.setTargetPointer(new FixedTarget(event.getTargetId()));
-                }
-                return true;
+        Spell spell = game.getStack().getSpell(event.getTargetId());
+        if (spell != null
+                && !spell.isCopy()
+                && spell.getCard() != null
+                && !spell.getCard().isCopy()
+                && (spell.getCardType().contains(CardType.INSTANT) || spell.getCardType().contains(CardType.SORCERY))) {
+            for (Effect effect : this.getEffects()) {
+                effect.setTargetPointer(new FixedTarget(event.getTargetId()));
             }
+            return true;
         }
         return false;
     }
@@ -130,7 +130,9 @@ class EyeOfTheStormEffect1 extends OneShotEffect {
 
     public EyeOfTheStormEffect1() {
         super(Outcome.Neutral);
-        staticText = "Whenever a player casts an instant or sorcery card, exile it. Then that player copies each instant or sorcery card exiled with {this}. For each copy, the player may cast the copy without paying its mana cost";
+        staticText = "Whenever a player casts an instant or sorcery card, exile it. "
+                + "Then that player copies each instant or sorcery card exiled with {this}. "
+                + "For each copy, the player may cast the copy without paying its mana cost";
     }
 
     public EyeOfTheStormEffect1(final EyeOfTheStormEffect1 effect) {

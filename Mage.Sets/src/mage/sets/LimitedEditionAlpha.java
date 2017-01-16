@@ -73,6 +73,7 @@ public class LimitedEditionAlpha extends ExpansionSet {
         cards.add(new SetCardInfo("Crusade", 200, Rarity.RARE, mage.cards.c.Crusade.class));
         cards.add(new SetCardInfo("Crystal Rod", 239, Rarity.UNCOMMON, mage.cards.c.CrystalRod.class));
         cards.add(new SetCardInfo("Cursed Land", 6, Rarity.UNCOMMON, mage.cards.c.CursedLand.class));
+        cards.add(new SetCardInfo("Cyclopean Tomb", 240, Rarity.RARE, mage.cards.c.CyclopeanTomb.class));
         cards.add(new SetCardInfo("Dark Ritual", 7, Rarity.COMMON, mage.cards.d.DarkRitual.class));
         cards.add(new SetCardInfo("Deathgrip", 9, Rarity.UNCOMMON, mage.cards.d.Deathgrip.class));
         cards.add(new SetCardInfo("Deathlace", 10, Rarity.RARE, mage.cards.d.Deathlace.class));
@@ -122,6 +123,7 @@ public class LimitedEditionAlpha extends ExpansionSet {
         cards.add(new SetCardInfo("Gray Ogre", 157, Rarity.COMMON, mage.cards.g.GrayOgre.class));
         cards.add(new SetCardInfo("Green Ward", 204, Rarity.UNCOMMON, mage.cards.g.GreenWard.class));
         cards.add(new SetCardInfo("Grizzly Bears", 108, Rarity.COMMON, mage.cards.g.GrizzlyBears.class));
+        cards.add(new SetCardInfo("Guardian Angel", 205, Rarity.COMMON, mage.cards.g.GuardianAngel.class));
         cards.add(new SetCardInfo("Healing Salve", 206, Rarity.COMMON, mage.cards.h.HealingSalve.class));
         cards.add(new SetCardInfo("Hill Giant", 158, Rarity.COMMON, mage.cards.h.HillGiant.class));
         cards.add(new SetCardInfo("Holy Armor", 207, Rarity.COMMON, mage.cards.h.HolyArmor.class));

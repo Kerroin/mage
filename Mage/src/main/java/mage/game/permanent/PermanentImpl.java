@@ -59,6 +59,7 @@ import mage.cards.CardImpl;
 import mage.constants.AsThoughEffectType;
 import mage.constants.CardType;
 import mage.constants.EffectType;
+import mage.constants.EnterEventType;
 import mage.constants.Rarity;
 import mage.constants.Zone;
 import mage.counters.Counter;
@@ -787,7 +788,7 @@ public abstract class PermanentImpl extends CardImpl implements Permanent {
             return 0;
         }
         for (Counter counter : markedDamage) {
-            addCounters(counter, game);
+            addCounters(counter, null, game);
         }
         markedDamage.clear();
         return 0;
@@ -832,7 +833,7 @@ public abstract class PermanentImpl extends CardImpl implements Permanent {
                         markDamage(CounterType.M1M1.createInstance(actualDamage));
                     } else {
                         // deal damage immediately
-                        addCounters(CounterType.M1M1.createInstance(actualDamage), game);
+                        addCounters(CounterType.M1M1.createInstance(actualDamage), null, game);
                     }
                 } else {
                     this.damage += actualDamage;
@@ -872,12 +873,18 @@ public abstract class PermanentImpl extends CardImpl implements Permanent {
             // remove some attributes here, because first apply effects comes later otherwise abilities (e.g. color related) will unintended trigger
             MorphAbility.setPermanentToFaceDownCreature(this);
         }
-        EntersTheBattlefieldEvent event = new EntersTheBattlefieldEvent(this, sourceId, getControllerId(), fromZone);
+
+        EntersTheBattlefieldEvent event = new EntersTheBattlefieldEvent(this, sourceId, getControllerId(), fromZone, EnterEventType.SELF);
+        if (game.replaceEvent(event)) {
+            return false;
+        }
+        event = new EntersTheBattlefieldEvent(this, sourceId, getControllerId(), fromZone);
         if (!game.replaceEvent(event)) {
             if (fireEvent) {
                 game.addSimultaneousEvent(event);
                 return true;
             }
+
         }
         return false;
     }
@@ -981,7 +988,7 @@ public abstract class PermanentImpl extends CardImpl implements Permanent {
             moveToZone(Zone.GRAVEYARD, sourceId, game, false);
             Player player = game.getPlayer(getControllerId());
             if (player != null && !game.isSimulation()) {
-                game.informPlayers(new StringBuilder(player.getLogName()).append(" sacrificed ").append(this.getLogName()).toString());
+                game.informPlayers(player.getLogName() + " sacrificed " + this.getLogName());
             }
             game.fireEvent(GameEvent.getEvent(EventType.SACRIFICED_PERMANENT, objectId, sourceId, controllerId));
             return true;

@@ -71,6 +71,7 @@ public class Invasion extends ExpansionSet {
         cards.add(new SetCardInfo("Armored Guardian", 230, Rarity.RARE, mage.cards.a.ArmoredGuardian.class));
         cards.add(new SetCardInfo("Artifact Mutation", 231, Rarity.RARE, mage.cards.a.ArtifactMutation.class));
         cards.add(new SetCardInfo("Assault // Battery", 295, Rarity.UNCOMMON, mage.cards.a.AssaultBattery.class));
+        cards.add(new SetCardInfo("Atalya, Samite Master", 4, Rarity.RARE, mage.cards.a.AtalyaSamiteMaster.class));
         cards.add(new SetCardInfo("Aura Mutation", 232, Rarity.RARE, mage.cards.a.AuraMutation.class));
         cards.add(new SetCardInfo("Aura Shards", 233, Rarity.UNCOMMON, mage.cards.a.AuraShards.class));
         cards.add(new SetCardInfo("Backlash", 234, Rarity.UNCOMMON, mage.cards.b.Backlash.class));
@@ -150,6 +151,7 @@ public class Invasion extends ExpansionSet {
         cards.add(new SetCardInfo("Goblin Spy", 145, Rarity.UNCOMMON, mage.cards.g.GoblinSpy.class));
         cards.add(new SetCardInfo("Hanna, Ship's Navigator", 249, Rarity.RARE, mage.cards.h.HannaShipsNavigator.class));
         cards.add(new SetCardInfo("Harrow", 189, Rarity.COMMON, mage.cards.h.Harrow.class));
+        cards.add(new SetCardInfo("Harsh Judgment", 19, Rarity.RARE, mage.cards.h.HarshJudgment.class));
         cards.add(new SetCardInfo("Hate Weaver", 108, Rarity.UNCOMMON, mage.cards.h.HateWeaver.class));
         cards.add(new SetCardInfo("Heroes' Reunion", 250, Rarity.UNCOMMON, mage.cards.h.HeroesReunion.class));
         cards.add(new SetCardInfo("Holy Day", 20, Rarity.COMMON, mage.cards.h.HolyDay.class));

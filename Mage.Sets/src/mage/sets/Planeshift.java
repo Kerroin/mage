@@ -74,6 +74,7 @@ public class Planeshift extends ExpansionSet {
         cards.add(new SetCardInfo("Darigaaz's Caldera", 137, Rarity.UNCOMMON, mage.cards.d.DarigaazsCaldera.class));
         cards.add(new SetCardInfo("Darigaaz's Charm", 100, Rarity.UNCOMMON, mage.cards.d.DarigaazsCharm.class));
         cards.add(new SetCardInfo("Daring Leap", 101, Rarity.COMMON, mage.cards.d.DaringLeap.class));
+        cards.add(new SetCardInfo("Dark Suspicions", 40, Rarity.RARE, mage.cards.d.DarkSuspicions.class));
         cards.add(new SetCardInfo("Deadapult", 59, Rarity.RARE, mage.cards.d.Deadapult.class));
         cards.add(new SetCardInfo("Death Bomb", 41, Rarity.COMMON, mage.cards.d.DeathBomb.class));
         cards.add(new SetCardInfo("Destructive Flow", 102, Rarity.RARE, mage.cards.d.DestructiveFlow.class));
@@ -81,6 +82,7 @@ public class Planeshift extends ExpansionSet {
         cards.add(new SetCardInfo("Disciple of Kangee", 3, Rarity.COMMON, mage.cards.d.DiscipleOfKangee.class));
         cards.add(new SetCardInfo("Doomsday Specter", 103, Rarity.RARE, mage.cards.d.DoomsdaySpecter.class));
         cards.add(new SetCardInfo("Draco", 131, Rarity.RARE, mage.cards.d.Draco.class));
+        cards.add(new SetCardInfo("Dralnu's Crusade", 104, Rarity.RARE, mage.cards.d.DralnusCrusade.class));
         cards.add(new SetCardInfo("Dralnu's Pet", 23, Rarity.RARE, mage.cards.d.DralnusPet.class));
         cards.add(new SetCardInfo("Dromar's Cavern", 138, Rarity.UNCOMMON, mage.cards.d.DromarsCavern.class));
         cards.add(new SetCardInfo("Dromar's Charm", 105, Rarity.UNCOMMON, mage.cards.d.DromarsCharm.class));

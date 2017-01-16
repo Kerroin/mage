@@ -29,8 +29,8 @@ package mage.cards.l;
 
 import java.util.UUID;
 import mage.MageInt;
+import mage.abilities.common.ActivateAsSorceryActivatedAbility;
 import mage.abilities.common.AttacksTriggeredAbility;
-import mage.abilities.common.SimpleActivatedAbility;
 import mage.abilities.costs.mana.ManaCostsImpl;
 import mage.abilities.effects.common.CreateTokenEffect;
 import mage.abilities.effects.common.continuous.GainAbilitySourceEffect;
@@ -49,7 +49,7 @@ import mage.game.permanent.token.TrooperToken;
 public class LAATGunship extends CardImpl {
 
     public LAATGunship(UUID ownerId, CardSetInfo setInfo) {
-        super(ownerId,setInfo,new CardType[]{CardType.ARTIFACT,CardType.CREATURE},"{3}{W}");
+        super(ownerId, setInfo, new CardType[]{CardType.ARTIFACT, CardType.CREATURE}, "{3}{W}");
         this.subtype.add("Starship");
         this.power = new MageInt(3);
         this.toughness = new MageInt(2);
@@ -57,8 +57,8 @@ public class LAATGunship extends CardImpl {
         // When LAAT Gunship attacks, create a 1/1 white Trooper creature token on to battlefield tapped and attacking.
         this.addAbility(new AttacksTriggeredAbility(new CreateTokenEffect(new TrooperToken(), 1, true, true), false));
 
-        // {W}: LAAT Gunship attacks gains spaceflight until the end of turn.
-        this.addAbility(new SimpleActivatedAbility(Zone.BATTLEFIELD, new GainAbilitySourceEffect(SpaceflightAbility.getInstance(), Duration.EndOfTurn), new ManaCostsImpl("{W}")));
+        // {W}: LAAT Gunship gains spaceflight until the end of turn. Activate this ability only as a sorcery
+        this.addAbility(new ActivateAsSorceryActivatedAbility(Zone.BATTLEFIELD, new GainAbilitySourceEffect(SpaceflightAbility.getInstance(), Duration.EndOfTurn), new ManaCostsImpl("{W}")));
 
     }
 

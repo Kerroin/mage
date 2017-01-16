@@ -43,9 +43,8 @@ import mage.cards.CardSetInfo;
 import mage.constants.CardType;
 import mage.constants.Outcome;
 import mage.constants.Zone;
-import mage.filter.FilterSpell;
+import mage.filter.StaticFilters;
 import mage.filter.common.FilterCreatureCard;
-import mage.filter.predicate.mageobject.CardTypePredicate;
 import mage.filter.predicate.mageobject.ColorPredicate;
 import mage.game.command.Emblem;
 import mage.target.common.TargetCardInLibrary;
@@ -63,13 +62,13 @@ public class GarrukCallerOfBeasts extends CardImpl {
     }
 
     public GarrukCallerOfBeasts(UUID ownerId, CardSetInfo setInfo) {
-        super(ownerId,setInfo,new CardType[]{CardType.PLANESWALKER},"{4}{G}{G}");
+        super(ownerId, setInfo, new CardType[]{CardType.PLANESWALKER}, "{4}{G}{G}");
         this.subtype.add("Garruk");
 
         this.addAbility(new PlanswalkerEntersWithLoyalityCountersAbility(4));
 
         // +1: Reveal the top 5 cards of your library. Put all creature cards revealed this way into your hand and the rest on the bottom of your library in any order.
-        this.addAbility(new LoyaltyAbility(new RevealLibraryPutIntoHandEffect(5, new FilterCreatureCard("all creature cards"), true), 1));
+        this.addAbility(new LoyaltyAbility(new RevealLibraryPutIntoHandEffect(5, new FilterCreatureCard("creature cards"), Zone.LIBRARY), 1));
 
         // -3: You may put a green creature card from your hand onto the battlefield.
         this.addAbility(new LoyaltyAbility(new PutPermanentOnBattlefieldEffect(filterGreenCreature), -3));
@@ -95,16 +94,10 @@ public class GarrukCallerOfBeasts extends CardImpl {
  */
 class GarrukCallerOfBeastsEmblem extends Emblem {
 
-    private static final FilterSpell filter = new FilterSpell("a creature spell");
-
-    static {
-        filter.add(new CardTypePredicate(CardType.CREATURE));
-    }
-
     public GarrukCallerOfBeastsEmblem() {
-        this.setName("EMBLEM: Garruk, Caller of Beasts");
+        this.setName("Emblem Garruk");
         Effect effect = new SearchLibraryPutInPlayEffect(new TargetCardInLibrary(new FilterCreatureCard("creature card")), false, true, Outcome.PutCreatureInPlay);
-        Ability ability = new SpellCastControllerTriggeredAbility(Zone.COMMAND, effect, filter, true, false);
+        Ability ability = new SpellCastControllerTriggeredAbility(Zone.COMMAND, effect, StaticFilters.FILTER_SPELL_A_CREATURE, true, false);
         this.getAbilities().add(ability);
     }
 }

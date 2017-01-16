@@ -66,7 +66,7 @@ public class GemstoneCaverns extends CardImpl {
         // If Gemstone Caverns is in your opening hand and you're not playing first, you may begin the game with Gemstone Caverns on the battlefield with a luck counter on it. If you do, exile a card from your hand.
         this.addAbility(new GemstoneCavernsAbility());
 
-        // {tap}: Add {C} to your mana pool. If Gemstone Caverns has a luck counter on it, instead add one mana of any color to your mana pool.
+        // {T}: Add {C} to your mana pool. If Gemstone Caverns has a luck counter on it, instead add one mana of any color to your mana pool.
         Ability ability = new ConditionalManaAbility(Zone.BATTLEFIELD,
                 new ConditionalManaEffect(
                         new AddManaOfAnyColorEffect(),
@@ -149,7 +149,7 @@ class GemstoneCavernsEffect extends OneShotEffect {
                 if (card.putOntoBattlefield(game, Zone.HAND, source.getSourceId(), source.getControllerId())) {
                     Permanent permanent = game.getPermanent(card.getId());
                     if (permanent != null) {
-                        permanent.addCounters(CounterType.LUCK.createInstance(), game);
+                        permanent.addCounters(CounterType.LUCK.createInstance(), source, game);
                         Cost cost = new ExileFromHandCost(new TargetCardInHand());
                         if (cost.canPay(source, source.getSourceId(), source.getControllerId(), game)) {
                             cost.pay(source, game, source.getSourceId(), source.getControllerId(), true, null);
