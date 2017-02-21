@@ -185,6 +185,7 @@ public class MastersEditionIII extends ExpansionSet {
         cards.add(new SetCardInfo("Ragnar", 167, Rarity.UNCOMMON, mage.cards.r.Ragnar.class));
         cards.add(new SetCardInfo("Ramirez DePietro", 168, Rarity.COMMON, mage.cards.r.RamirezDePietro.class));
         cards.add(new SetCardInfo("Ramses Overdark", 169, Rarity.UNCOMMON, mage.cards.r.RamsesOverdark.class));
+        cards.add(new SetCardInfo("Rasputin Dreamweaver", 170, Rarity.RARE, mage.cards.r.RasputinDreamweaver.class));
         cards.add(new SetCardInfo("Recall", 46, Rarity.UNCOMMON, mage.cards.r.Recall.class));
         cards.add(new SetCardInfo("Reincarnation", 130, Rarity.UNCOMMON, mage.cards.r.Reincarnation.class));
         cards.add(new SetCardInfo("Remove Soul", 47, Rarity.COMMON, mage.cards.r.RemoveSoul.class));
@@ -204,6 +205,7 @@ public class MastersEditionIII extends ExpansionSet {
         cards.add(new SetCardInfo("Sivitri Scarzam", 175, Rarity.COMMON, mage.cards.s.SivitriScarzam.class));
         cards.add(new SetCardInfo("Slashing Tiger", 133, Rarity.COMMON, mage.cards.s.SlashingTiger.class));
         cards.add(new SetCardInfo("Sol Grail", 201, Rarity.COMMON, mage.cards.s.SolGrail.class));
+        cards.add(new SetCardInfo("Spirit Shackle", 74, Rarity.COMMON, mage.cards.s.SpiritShackle.class));
         cards.add(new SetCardInfo("Spoils of Victory", 134, Rarity.COMMON, mage.cards.s.SpoilsOfVictory.class));
         cards.add(new SetCardInfo("Stolen Grain", 75, Rarity.UNCOMMON, mage.cards.s.StolenGrain.class));
         cards.add(new SetCardInfo("Strategic Planning", 51, Rarity.COMMON, mage.cards.s.StrategicPlanning.class));

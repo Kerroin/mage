@@ -30,7 +30,6 @@ package mage.abilities;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 import mage.MageObject;
 import mage.MageObjectReference;
 import mage.Mana;
@@ -39,6 +38,7 @@ import mage.abilities.costs.AlternativeSourceCosts;
 import mage.abilities.costs.Cost;
 import mage.abilities.costs.Costs;
 import mage.abilities.costs.CostsImpl;
+import mage.abilities.costs.OptionalAdditionalModeSourceCosts;
 import mage.abilities.costs.OptionalAdditionalSourceCosts;
 import mage.abilities.costs.VariableCost;
 import mage.abilities.costs.common.TapSourceCost;
@@ -50,8 +50,8 @@ import mage.abilities.effects.ContinuousEffect;
 import mage.abilities.effects.Effect;
 import mage.abilities.effects.Effects;
 import mage.abilities.effects.OneShotEffect;
-import mage.abilities.effects.common.BasicManaEffect;
 import mage.abilities.effects.common.DynamicManaEffect;
+import mage.abilities.effects.common.ManaEffect;
 import mage.abilities.keyword.FlashbackAbility;
 import mage.abilities.mana.ActivatedManaAbilityImpl;
 import mage.cards.Card;
@@ -274,7 +274,7 @@ public abstract class AbilityImpl implements Ability {
         // if ability can be cast for no mana, clear the mana costs now, because additional mana costs must be paid.
         // For Flashback ability can be set X before, so the X costs have to be restored for the flashbacked ability
         if (noMana) {
-            if (this.getManaCostsToPay().getVariableCosts().size() > 0) {
+            if (!this.getManaCostsToPay().getVariableCosts().isEmpty()) {
                 int xValue = this.getManaCostsToPay().getX();
                 this.getManaCostsToPay().clear();
                 VariableManaCost xCosts = new VariableManaCost();
@@ -283,6 +283,9 @@ public abstract class AbilityImpl implements Ability {
             } else {
                 this.getManaCostsToPay().clear();
             }
+        }
+        if (modes.getAdditionalCost() != null) {
+            ((OptionalAdditionalModeSourceCosts) modes.getAdditionalCost()).addOptionalAdditionalModeCosts(this, game);
         }
         // 20130201 - 601.2b
         // If the spell has alternative or additional costs that will be paid as it's being cast such
@@ -330,7 +333,7 @@ public abstract class AbilityImpl implements Ability {
             }
             // Flashback abilities haven't made the choices the underlying spell might need for targeting.
             if (!(this instanceof FlashbackAbility)
-                    && getTargets().size() > 0) {
+                    && !getTargets().isEmpty()) {
                 Outcome outcome = getEffects().isEmpty() ? Outcome.Detriment : getEffects().get(0).getOutcome();
                 if (getTargets().chooseTargets(outcome, this.controllerId, this, noMana, game) == false) {
                     if ((variableManaCost != null || announceString != null) && !game.isSimulation()) {
@@ -345,7 +348,7 @@ public abstract class AbilityImpl implements Ability {
         for (Cost cost : optionalCosts) {
             if (cost instanceof ManaCost) {
                 cost.clearPaid();
-                if (controller.chooseUse(Outcome.Benefit, "Pay optional cost " + cost.getText() + "?", this, game)) {
+                if (controller.chooseUse(Outcome.Benefit, "Pay optional cost " + cost.getText() + '?', this, game)) {
                     manaCostsToPay.add((ManaCost) cost);
                 }
             }
@@ -415,8 +418,8 @@ public abstract class AbilityImpl implements Ability {
                     Effect effect = getEffects().get(0);
                     if (effect instanceof DynamicManaEffect) {
                         mana = ((DynamicManaEffect) effect).getMana(game, this);
-                    } else if (effect instanceof BasicManaEffect) {
-                        mana = ((BasicManaEffect) effect).getMana(game, this);
+                    } else if (effect instanceof ManaEffect) {
+                        mana = ((ManaEffect) effect).getMana(game, this);
                     }
                     if (mana != null && mana.getAny() == 0) { // if mana == null or Any > 0 the event has to be fired in the mana effect to know which mana was produced
                         ManaEvent event = new ManaEvent(GameEvent.EventType.TAPPED_FOR_MANA, sourceId, sourceId, controllerId, mana);
@@ -504,11 +507,11 @@ public abstract class AbilityImpl implements Ability {
                 // set the xcosts to paid
                 variableCost.setAmount(xValue);
                 ((Cost) variableCost).setPaid();
-                String message = controller.getLogName() + " announces a value of " + xValue + " (" + variableCost.getActionText() + ")";
+                String message = controller.getLogName() + " announces a value of " + xValue + " (" + variableCost.getActionText() + ')';
                 if (announceString == null) {
                     announceString = message;
                 } else {
-                    announceString = announceString + " " + message;
+                    announceString = announceString + ' ' + message;
                 }
             }
         }
@@ -543,7 +546,7 @@ public abstract class AbilityImpl implements Ability {
                     int amountMana = xValue * variableManaCost.getMultiplier();
                     StringBuilder manaString = threadLocalBuilder.get();
                     if (variableManaCost.getFilter() == null || variableManaCost.getFilter().isGeneric()) {
-                        manaString.append("{").append(amountMana).append("}");
+                        manaString.append('{').append(amountMana).append('}');
                     } else {
                         String manaSymbol = null;
                         if (variableManaCost.getFilter().isBlack()) {
@@ -561,7 +564,7 @@ public abstract class AbilityImpl implements Ability {
                             throw new UnsupportedOperationException("ManaFilter is not supported: " + this.toString());
                         }
                         for (int i = 0; i < amountMana; i++) {
-                            manaString.append("{").append(manaSymbol).append("}");
+                            manaString.append('{').append(manaSymbol).append('}');
                         }
                     }
                     manaCostsToPay.add(new ManaCostsImpl(manaString.toString()));
@@ -737,12 +740,12 @@ public abstract class AbilityImpl implements Ability {
     public String getRule(boolean all) {
         StringBuilder sbRule = threadLocalBuilder.get();
         if (all || this.abilityType != AbilityType.SPELL) {
-            if (manaCosts.size() > 0) {
+            if (!manaCosts.isEmpty()) {
                 sbRule.append(manaCosts.getText());
             }
-            if (costs.size() > 0) {
+            if (!costs.isEmpty()) {
                 if (sbRule.length() > 0) {
-                    sbRule.append(",");
+                    sbRule.append(',');
                 }
                 sbRule.append(costs.getText());
             }
@@ -1035,7 +1038,7 @@ public abstract class AbilityImpl implements Ability {
                     } else {
                         half = " right";
                     }
-                    if (spellAbility.getTargets().size() > 0) {
+                    if (!spellAbility.getTargets().isEmpty()) {
                         sb.append(half).append(" half targeting ");
                         for (Target target : spellAbility.getTargets()) {
                             sb.append(target.getTargetedName(game));
@@ -1066,7 +1069,7 @@ public abstract class AbilityImpl implements Ability {
                 for (Mode mode : spellModes.values()) {
                     item++;
                     if (mode.getId().equals(selectedMode.getId())) {
-                        sb.append(" (mode ").append(item).append(")");
+                        sb.append(" (mode ").append(item).append(')');
                         sb.append(getTargetDescriptionForLog(selectedMode.getTargets(), game));
                         break;
                     }
@@ -1085,7 +1088,7 @@ public abstract class AbilityImpl implements Ability {
 
     protected String getTargetDescriptionForLog(Targets targets, Game game) {
         StringBuilder sb = new StringBuilder(); // threadLocal StringBuilder can't be used because calling method already uses it
-        if (targets.size() > 0) {
+        if (!targets.isEmpty()) {
             String usedVerb = null;
             for (Target target : targets) {
                 if (!target.getTargets().isEmpty()) {

@@ -279,6 +279,7 @@ public class Commander extends ExpansionSet {
         cards.add(new SetCardInfo("Savage Twister", 222, Rarity.UNCOMMON, mage.cards.s.SavageTwister.class));
         cards.add(new SetCardInfo("Scattering Stroke", 60, Rarity.UNCOMMON, mage.cards.s.ScatteringStroke.class));
         cards.add(new SetCardInfo("Scavenging Ooze", 170, Rarity.RARE, mage.cards.s.ScavengingOoze.class));
+        cards.add(new SetCardInfo("Scythe Specter", 97, Rarity.RARE, mage.cards.s.ScytheSpecter.class));
         cards.add(new SetCardInfo("Secluded Steppe", 286, Rarity.COMMON, mage.cards.s.SecludedSteppe.class));
         cards.add(new SetCardInfo("Selesnya Evangel", 223, Rarity.COMMON, mage.cards.s.SelesnyaEvangel.class));
         cards.add(new SetCardInfo("Selesnya Guildmage", 224, Rarity.UNCOMMON, mage.cards.s.SelesnyaGuildmage.class));
@@ -326,6 +327,7 @@ public class Commander extends ExpansionSet {
         cards.add(new SetCardInfo("Terminate", 231, Rarity.COMMON, mage.cards.t.Terminate.class));
         cards.add(new SetCardInfo("Terramorphic Expanse", 291, Rarity.COMMON, mage.cards.t.TerramorphicExpanse.class));
         cards.add(new SetCardInfo("The Mimeoplasm", 210, Rarity.MYTHIC, mage.cards.t.TheMimeoplasm.class));
+        cards.add(new SetCardInfo("Trade Secrets", 64, Rarity.RARE, mage.cards.t.TradeSecrets.class));
         cards.add(new SetCardInfo("Tranquil Thicket", 292, Rarity.COMMON, mage.cards.t.TranquilThicket.class));
         cards.add(new SetCardInfo("Trench Gorger", 65, Rarity.RARE, mage.cards.t.TrenchGorger.class));
         cards.add(new SetCardInfo("Tribute to the Wild", 175, Rarity.UNCOMMON, mage.cards.t.TributeToTheWild.class));

@@ -26,7 +26,7 @@
  * or implied, of BetaSteward_at_googlemail.com.
  */
 
-/*
+ /*
  * ConnectDialog.java
  *
  * Created on 20-Jan-2010, 9:37:07 PM
@@ -391,13 +391,14 @@ public class ConnectDialog extends MageDialog {
             connection.setUsername(this.txtUserName.getText().trim());
             connection.setPassword(this.txtPassword.getText().trim());
             connection.setForceDBComparison(this.chkForceUpdateDB.isSelected());
+            connection.setUserIdStr(System.getProperty("user.name") + ":" + MagePreferences.getUserNames());
             MageFrame.getPreferences().put(KEY_CONNECT_FLAG, ((CountryItemEditor) cbFlag.getEditor()).getImageItem());
             PreferencesDialog.setProxyInformation(connection);
 
             // pref settings
             MageFrame.getInstance().setUserPrefsToConnection(connection);
 
-            logger.debug("connecting: " + connection.getProxyType() + " " + connection.getProxyHost() + " " + connection.getProxyPort());
+            logger.debug("connecting: " + connection.getProxyType() + ' ' + connection.getProxyHost() + ' ' + connection.getProxyPort());
             task = new ConnectTask();
             task.execute();
         } finally {

@@ -29,6 +29,7 @@ package mage.game.draft;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import mage.cards.Card;
 import mage.cards.repository.CardCriteria;
@@ -108,7 +109,7 @@ public abstract class DraftCube {
                     if (!cardId.getExtension().isEmpty()) {
                         CardCriteria criteria = new CardCriteria().name(cardId.getName()).setCodes(cardId.extension);
                         List<CardInfo> cardList = CardRepository.instance.findCards(criteria);
-                        if (cardList != null && cardList.size() > 0) {
+                        if (cardList != null && !cardList.isEmpty()) {
                             cardInfo = cardList.get(0);
                         }
                     } else {
@@ -119,11 +120,11 @@ public abstract class DraftCube {
                         booster.add(cardInfo.getCard());
                         done = true;
                     } else {
-                        logger.warn(new StringBuilder(this.getName()).append(" - Card not found: ").append(cardId.getName()).append(":").append(cardId.extension));
+                        logger.warn(new StringBuilder(this.getName()).append(" - Card not found: ").append(cardId.getName()).append(':').append(cardId.extension));
                         notValid++;
                     }
                 } else {
-                    logger.error(new StringBuilder(this.getName()).append(" - Empty card name: ").append(cardId.getName()).append(":").append(cardId.extension));
+                    logger.error(new StringBuilder(this.getName()).append(" - Empty card name: ").append(cardId.getName()).append(':').append(cardId.extension));
                     notValid++;
                 }
 
@@ -146,7 +147,7 @@ public abstract class DraftCube {
         }
 
         for (int i = leftCubeCards.size() - 1; i >= 0; i--) {
-            if (leftCubeCards.get(i) == cardId) {
+            if (Objects.equals(leftCubeCards.get(i), cardId)) {
                 leftCubeCards.remove(i);
                 return;
             }

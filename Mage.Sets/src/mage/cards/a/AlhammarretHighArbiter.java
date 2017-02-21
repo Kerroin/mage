@@ -27,6 +27,7 @@
  */
 package mage.cards.a;
 
+import java.util.Objects;
 import java.util.UUID;
 import mage.MageInt;
 import mage.MageObject;
@@ -108,7 +109,7 @@ class AlhammarretHighArbiterEffect extends OneShotEffect {
         if (controller != null) {
             Cards revealedCards = new CardsImpl();
             for (UUID playerId : game.getState().getPlayersInRange(controller.getId(), game)) {
-                if (playerId != controller.getId()) {
+                if (!Objects.equals(playerId, controller.getId())) {
                     Player opponent = game.getPlayer(playerId);
                     if (opponent != null) {
                         Cards cards = new CardsImpl(opponent.getHand());
@@ -121,7 +122,7 @@ class AlhammarretHighArbiterEffect extends OneShotEffect {
             controller.chooseTarget(Outcome.Benefit, revealedCards, target, source, game);
             Card card = game.getCard(target.getFirstTarget());
             if (card != null) {
-                game.informPlayers("The choosen card name is [" + GameLog.getColoredObjectName(card) + "]");
+                game.informPlayers("The choosen card name is [" + GameLog.getColoredObjectName(card) + ']');
                 Permanent sourcePermanent = game.getPermanent(source.getSourceId());
                 if (sourcePermanent != null) {
                     sourcePermanent.addInfo("chosen card name", CardUtil.addToolTipMarkTags("Chosen card name: " + card.getName()), game);

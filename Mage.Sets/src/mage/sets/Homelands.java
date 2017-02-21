@@ -96,7 +96,6 @@ public class Homelands extends ExpansionSet {
         cards.add(new SetCardInfo("Clockwork Gnomes", 127, Rarity.COMMON, mage.cards.c.ClockworkGnomes.class));
         cards.add(new SetCardInfo("Coral Reef", 29, Rarity.COMMON, mage.cards.c.CoralReef.class));
         cards.add(new SetCardInfo("Dark Maze", 31, Rarity.COMMON, mage.cards.d.DarkMaze.class, new CardGraphicInfo(null, true)));
-        cards.add(new SetCardInfo("Dark Maze", 31, Rarity.COMMON, mage.cards.d.DarkMaze.class, new CardGraphicInfo(null, true)));
         cards.add(new SetCardInfo("Death Speakers", 109, Rarity.UNCOMMON, mage.cards.d.DeathSpeakers.class));
         cards.add(new SetCardInfo("Didgeridoo", 130, Rarity.RARE, mage.cards.d.Didgeridoo.class));
         cards.add(new SetCardInfo("Drudge Spell", 6, Rarity.UNCOMMON, mage.cards.d.DrudgeSpell.class));
@@ -115,6 +114,7 @@ public class Homelands extends ExpansionSet {
         cards.add(new SetCardInfo("Folk of An-Havva", 58, Rarity.COMMON, FolkOfAnHavva.class, new CardGraphicInfo(null, true)));
         cards.add(new SetCardInfo("Folk of An-Havva", 59, Rarity.COMMON, FolkOfAnHavva.class, new CardGraphicInfo(null, true)));
         cards.add(new SetCardInfo("Forget", 32, Rarity.RARE, mage.cards.f.Forget.class));
+        cards.add(new SetCardInfo("Ghost Hounds", 12, Rarity.UNCOMMON, mage.cards.g.GhostHounds.class));
         cards.add(new SetCardInfo("Grandmother Sengir", 13, Rarity.RARE, mage.cards.g.GrandmotherSengir.class));
         cards.add(new SetCardInfo("Headstone", 15, Rarity.COMMON, mage.cards.h.Headstone.class));
         cards.add(new SetCardInfo("Hungry Mist", 60, Rarity.COMMON, mage.cards.h.HungryMist.class, new CardGraphicInfo(null, true)));

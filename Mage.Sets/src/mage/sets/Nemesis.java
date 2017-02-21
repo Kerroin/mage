@@ -81,6 +81,7 @@ public class Nemesis extends ExpansionSet {
         cards.add(new SetCardInfo("Flowstone Crusher", 81, Rarity.COMMON, mage.cards.f.FlowstoneCrusher.class));
         cards.add(new SetCardInfo("Flowstone Overseer", 82, Rarity.RARE, mage.cards.f.FlowstoneOverseer.class));
         cards.add(new SetCardInfo("Flowstone Slide", 83, Rarity.RARE, mage.cards.f.FlowstoneSlide.class));
+        cards.add(new SetCardInfo("Flowstone Thopter", 132, Rarity.UNCOMMON, mage.cards.f.FlowstoneThopter.class));
         cards.add(new SetCardInfo("Flowstone Wall", 86, Rarity.COMMON, mage.cards.f.FlowstoneWall.class));
         cards.add(new SetCardInfo("Infiltrate", 33, Rarity.COMMON, mage.cards.i.Infiltrate.class));
         cards.add(new SetCardInfo("Jolting Merfolk", 34, Rarity.UNCOMMON, mage.cards.j.JoltingMerfolk.class));
@@ -96,12 +97,14 @@ public class Nemesis extends ExpansionSet {
         cards.add(new SetCardInfo("Mogg Salvage", 94, Rarity.UNCOMMON, mage.cards.m.MoggSalvage.class));
         cards.add(new SetCardInfo("Murderous Betrayal", 61, Rarity.RARE, mage.cards.m.MurderousBetrayal.class));
         cards.add(new SetCardInfo("Netter en-Dal", 13, Rarity.COMMON, mage.cards.n.NetterEnDal.class));
+        cards.add(new SetCardInfo("Noble Stand", 14, Rarity.UNCOMMON, mage.cards.n.NobleStand.class));
         cards.add(new SetCardInfo("Off Balance", 15, Rarity.COMMON, mage.cards.o.OffBalance.class));
         cards.add(new SetCardInfo("Oracle's Attendants", 16, Rarity.RARE, mage.cards.o.OraclesAttendants.class));
         cards.add(new SetCardInfo("Oraxid", 35, Rarity.COMMON, mage.cards.o.Oraxid.class));
         cards.add(new SetCardInfo("Overlaid Terrain", 108, Rarity.RARE, mage.cards.o.OverlaidTerrain.class));
         cards.add(new SetCardInfo("Parallax Dementia", 62, Rarity.COMMON, mage.cards.p.ParallaxDementia.class));
         cards.add(new SetCardInfo("Parallax Inhibitor", 134, Rarity.RARE, mage.cards.p.ParallaxInhibitor.class));
+        cards.add(new SetCardInfo("Parallax Nexus", 63, Rarity.RARE, mage.cards.p.ParallaxNexus.class));
         cards.add(new SetCardInfo("Parallax Tide", 37, Rarity.RARE, mage.cards.p.ParallaxTide.class));
         cards.add(new SetCardInfo("Parallax Wave", 17, Rarity.RARE, mage.cards.p.ParallaxWave.class));
         cards.add(new SetCardInfo("Phyrexian Driver", 64, Rarity.COMMON, mage.cards.p.PhyrexianDriver.class));
@@ -142,6 +145,7 @@ public class Nemesis extends ExpansionSet {
         cards.add(new SetCardInfo("Stampede Driver", 122, Rarity.UNCOMMON, mage.cards.s.StampedeDriver.class));
         cards.add(new SetCardInfo("Stronghold Discipline", 73, Rarity.COMMON, mage.cards.s.StrongholdDiscipline.class));
         cards.add(new SetCardInfo("Stronghold Gambit", 100, Rarity.RARE, mage.cards.s.StrongholdGambit.class));
+        cards.add(new SetCardInfo("Stronghold Machinist", 46, Rarity.UNCOMMON, mage.cards.s.StrongholdMachinist.class));
         cards.add(new SetCardInfo("Stronghold Zeppelin", 47, Rarity.UNCOMMON, mage.cards.s.StrongholdZeppelin.class));
         cards.add(new SetCardInfo("Submerge", 48, Rarity.UNCOMMON, mage.cards.s.Submerge.class));
         cards.add(new SetCardInfo("Tangle Wire", 139, Rarity.RARE, mage.cards.t.TangleWire.class));

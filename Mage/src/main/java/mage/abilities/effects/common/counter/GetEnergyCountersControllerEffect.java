@@ -61,9 +61,9 @@ public class GetEnergyCountersControllerEffect extends OneShotEffect {
 
     @Override
     public boolean apply(Game game, Ability source) {
-        Player player = game.getPlayer(source.getControllerId());
-        if (player != null) {
-            return player.addCounters(CounterType.ENERGY.createInstance(value.calculate(game, source, this)), game);
+        Player controller = game.getPlayer(source.getControllerId());
+        if (controller != null) {
+            return controller.addCounters(CounterType.ENERGY.createInstance(value.calculate(game, source, this)), game);
         }
         return false;
     }
@@ -72,7 +72,7 @@ public class GetEnergyCountersControllerEffect extends OneShotEffect {
         if (!staticText.isEmpty()) {
             return;
         }
-        
+
         StringBuilder sb = new StringBuilder();
         sb.append("you get ");
         int val = 1;
@@ -88,7 +88,7 @@ public class GetEnergyCountersControllerEffect extends OneShotEffect {
         sb.append(val > 1 ? "s" : "");
         sb.append(")</i>");
         if ((value instanceof StaticValue)) {
-            sb.append(".");
+            sb.append('.');
         } else {
             sb.append(" for each ");
             sb.append(value.getMessage());

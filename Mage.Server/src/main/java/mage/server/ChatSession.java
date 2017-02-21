@@ -35,9 +35,9 @@ import mage.view.ChatMessage.SoundToPlay;
 import org.apache.log4j.Logger;
 
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -47,7 +47,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ChatSession {
 
     private static final Logger logger = Logger.getLogger(ChatSession.class);
-    private static final DateFormat timeFormatter = SimpleDateFormat.getTimeInstance(SimpleDateFormat.SHORT);
+    private static final DateFormat timeFormatter = DateFormat.getTimeInstance(DateFormat.SHORT);
 
     private final ConcurrentHashMap<UUID, String> clients = new ConcurrentHashMap<>();
     private final UUID chatId;
@@ -61,13 +61,14 @@ public class ChatSession {
     }
 
     public void join(UUID userId) {
-        User user = UserManager.getInstance().getUser(userId);
-        if (user != null && !clients.containsKey(userId)) {
-            String userName = user.getName();
-            clients.put(userId, userName);
-            broadcast(null, userName + " has joined (" + user.getClientVersion() + ")", MessageColor.BLUE, true, MessageType.STATUS, null);
-            logger.trace(userName + " joined chat " + chatId);
-        }
+       UserManager.getInstance().getUser(userId).ifPresent(user-> {
+           if (!clients.containsKey(userId)) {
+               String userName = user.getName();
+               clients.put(userId, userName);
+               broadcast(null, userName + " has joined (" + user.getClientVersion() + ')', MessageColor.BLUE, true, MessageType.STATUS, null);
+               logger.trace(userName + " joined chat " + chatId);
+           }
+       });
     }
 
     public void kill(UUID userId, DisconnectReason reason) {
@@ -81,7 +82,7 @@ public class ChatSession {
                 String userName = clients.get(userId);
                 if (reason != DisconnectReason.LostConnection) { // for lost connection the user will be reconnected or session expire so no remove of chat yet
                     clients.remove(userId);
-                    logger.debug(userName + "(" + reason.toString() + ")" + " removed from chatId " + chatId);
+                    logger.debug(userName + '(' + reason.toString() + ')' + " removed from chatId " + chatId);
                 }
                 String message;
                 switch (reason) {
@@ -104,7 +105,7 @@ public class ChatSession {
                         message = null;
                         break;
                     default:
-                        message = " left (" + reason.toString() + ")";
+                        message = " left (" + reason.toString() + ')';
                 }
                 if (message != null) {
                     broadcast(null, userName + message, MessageColor.BLUE, true, MessageType.STATUS, null);
@@ -141,9 +142,9 @@ public class ChatSession {
             HashSet<UUID> clientsToRemove = null;
             ClientCallback clientCallback = new ClientCallback("chatMessage", chatId, new ChatMessage(userName, message, (withTime ? timeFormatter.format(new Date()) : ""), color, messageType, soundToPlay));
             for (UUID userId : clients.keySet()) {
-                User user = UserManager.getInstance().getUser(userId);
-                if (user != null) {
-                    user.fireCallback(clientCallback);
+                Optional<User> user = UserManager.getInstance().getUser(userId);
+                if (user.isPresent()) {
+                    user.get().fireCallback(clientCallback);
                 } else {
                     if (clientsToRemove == null) {
                         clientsToRemove = new HashSet<>();

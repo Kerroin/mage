@@ -27,11 +27,7 @@
  */
 package mage.server;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
@@ -105,11 +101,11 @@ public class Session {
                 return returnMessage;
             }
             AuthorizedUserRepository.instance.add(userName, password, email);
-            String subject = "XMage Registration Completed";
-            String text = "You are successfully registered as " + userName + ".";
+            String text = "You are successfully registered as " + userName + '.';
             text += "  Your initial, generated password is: " + password;
 
             boolean success;
+            String subject = "XMage Registration Completed";
             if (!ConfigSettings.getInstance().getMailUser().isEmpty()) {
                 success = MailClient.sendMessage(email, subject, text);
             } else {
@@ -117,6 +113,10 @@ public class Session {
             }
             if (success) {
                 String ok = "Sent a registration confirmation / initial password email to " + email + " for " + userName;
+                logger.info(ok);
+                sendInfoMessageToClient(ok);
+            } else if (Main.isTestMode()) {
+                String ok = "Server is in test mode.  Your account is registered with a password of " + password + " for " + userName;
                 logger.info(ok);
                 sendInfoMessageToClient(ok);
             } else {
@@ -268,12 +268,13 @@ public class Session {
         this.userId = user.getId();
     }
 
-    public boolean setUserData(String userName, UserData userData, String clientVersion) {
+    public boolean setUserData(String userName, UserData userData, String clientVersion, String userIdStr) {
         User user = UserManager.getInstance().getUserByName(userName);
         if (user != null) {
             if (clientVersion != null) {
                 user.setClientVersion(clientVersion);
             }
+            user.setUserIdStr(userIdStr);
             if (user.getUserData() == null || user.getUserData().getGroupId() == UserGroup.DEFAULT.getGroupId()) {
                 user.setUserData(userData);
             } else {
@@ -321,9 +322,13 @@ public class Session {
             } else {
                 logger.error("CAN'T GET LOCK - userId: " + userId + " hold count: " + lock.getHoldCount());
             }
-            User user = UserManager.getInstance().getUser(userId);
-            if (user == null || !user.isConnected()) {
+            Optional<User> _user = UserManager.getInstance().getUser(userId);
+            if (!_user.isPresent()) {
                 return; //user was already disconnected by other thread
+            }
+            User user = _user.get();
+            if(!user.isConnected()){
+                return;
             }
             if (!user.getSessionId().equals(sessionId)) {
                 // user already reconnected with another instance
@@ -371,12 +376,14 @@ public class Session {
             call.setMessageId(messageId++);
             callbackHandler.handleCallbackOneway(new Callback(call));
         } catch (HandleCallbackException ex) {
-            User user = UserManager.getInstance().getUser(userId);
-            logger.warn("SESSION CALLBACK EXCEPTION - " + (user != null ? user.getName() : "") + " userId " + userId);
-            logger.warn(" - method: " + call.getMethod());
-            logger.warn(" - cause: " + getBasicCause(ex).toString());
-            logger.trace("Stack trace:", ex);
-            userLostConnection();
+            ex.printStackTrace();
+            UserManager.getInstance().getUser(userId).ifPresent(user-> {
+                logger.warn("SESSION CALLBACK EXCEPTION - " + user.getName() + " userId " + userId);
+                logger.warn(" - method: " + call.getMethod());
+                logger.warn(" - cause: " + getBasicCause(ex).toString());
+                logger.trace("Stack trace:", ex);
+                userLostConnection();
+            });
         }
     }
 
@@ -418,7 +425,7 @@ public class Session {
         Throwable t = cause;
         while (t.getCause() != null) {
             t = t.getCause();
-            if (t == cause) {
+            if (Objects.equals(t, cause)) {
                 throw new IllegalArgumentException("Infinite cycle detected in causal chain");
             }
         }

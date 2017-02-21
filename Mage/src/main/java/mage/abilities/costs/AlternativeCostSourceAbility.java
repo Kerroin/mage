@@ -160,18 +160,13 @@ public class AlternativeCostSourceAbility extends StaticAbility implements Alter
                 if (dynamicCost != null) {
                     costChoiceText = dynamicCost.getText(ability, game);
                 } else {
-                    costChoiceText = alternativeCostsToCheck.isEmpty() ? "Cast without paying its mana cost?" : "Pay alternative costs? (" + alternativeCostsToCheck.getText() + ")";
+                    costChoiceText = alternativeCostsToCheck.isEmpty() ? "Cast without paying its mana cost?" : "Pay alternative costs? (" + alternativeCostsToCheck.getText() + ')';
                 }
 
                 if (alternativeCostsToCheck.canPay(ability, ability.getSourceId(), ability.getControllerId(), game)
                         && player.chooseUse(Outcome.Benefit, costChoiceText, this, game)) {
                     if (ability instanceof SpellAbility) {
-                        for (Iterator<ManaCost> iterator = ability.getManaCostsToPay().iterator(); iterator.hasNext();) {
-                            ManaCost manaCost = iterator.next();
-                            if (manaCost instanceof VariableCost) {
-                                iterator.remove();
-                            }
-                        }
+                        ability.getManaCostsToPay().removeIf(manaCost -> manaCost instanceof VariableCost);
                         CardUtil.reduceCost((SpellAbility) ability, ability.getManaCosts());
 
                     } else {
@@ -263,9 +258,9 @@ public class AlternativeCostSourceAbility extends StaticAbility implements Alter
         } else if (alternateCosts.isEmpty()) {
             sb.append("cast {this} without paying its mana cost");
         }
-        sb.append(".");
+        sb.append('.');
         if (numberCosts == 1 && remarkText != null) {
-            sb.append(" ").append(remarkText);
+            sb.append(' ').append(remarkText);
         }
         return sb.toString();
     }

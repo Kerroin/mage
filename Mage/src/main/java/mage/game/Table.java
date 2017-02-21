@@ -28,6 +28,7 @@
 package mage.game;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -63,6 +64,7 @@ public class Table implements Serializable {
     private Tournament tournament;
     private TableRecorder recorder;
 
+    @FunctionalInterface
     public interface TableRecorder {
         void record(Table table);
     }

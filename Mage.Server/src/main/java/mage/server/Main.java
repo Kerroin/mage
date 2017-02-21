@@ -27,16 +27,6 @@
  */
 package mage.server;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.management.MBeanServer;
 import mage.cards.ExpansionSet;
 import mage.cards.Sets;
 import mage.cards.repository.CardScanner;
@@ -59,14 +49,7 @@ import mage.server.util.config.GamePlugin;
 import mage.server.util.config.Plugin;
 import mage.utils.MageVersion;
 import org.apache.log4j.Logger;
-import org.jboss.remoting.Client;
-import org.jboss.remoting.ClientDisconnectedException;
-import org.jboss.remoting.ConnectionListener;
-import org.jboss.remoting.InvocationRequest;
-import org.jboss.remoting.InvokerLocator;
-import org.jboss.remoting.Remoting;
-import org.jboss.remoting.ServerInvocationHandler;
-import org.jboss.remoting.ServerInvoker;
+import org.jboss.remoting.*;
 import org.jboss.remoting.callback.InvokerCallbackHandler;
 import org.jboss.remoting.callback.ServerInvokerCallbackHandler;
 import org.jboss.remoting.transport.Connector;
@@ -76,8 +59,15 @@ import org.jboss.remoting.transporter.TransporterClient;
 import org.jboss.remoting.transporter.TransporterServer;
 import org.w3c.dom.Element;
 
+import javax.management.MBeanServer;
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.util.*;
+
 /**
- *
  * @author BetaSteward_at_googlemail.com
  */
 public class Main {
@@ -127,13 +117,13 @@ public class Main {
         }
 
         logger.info("Loading extension packages...");
-        List<ExtensionPackage> extensions = new ArrayList<>();
         if (!extensionFolder.exists()) {
             if (!extensionFolder.mkdirs()) {
                 logger.error("Could not create extensions directory.");
             }
         }
         File[] extensionDirectories = extensionFolder.listFiles();
+        List<ExtensionPackage> extensions = new ArrayList<>();
         if (extensionDirectories != null) {
             for (File f : extensionDirectories) {
                 if (f.isDirectory()) {
@@ -141,7 +131,7 @@ public class Main {
                         logger.info(" - Loading extension from " + f);
                         extensions.add(ExtensionPackageLoader.loadExtension(f));
                     } catch (IOException e) {
-                        logger.error("Could not load extension in " + f + "!", e);
+                        logger.error("Could not load extension in " + f + '!', e);
                     }
                 }
             }
@@ -152,7 +142,7 @@ public class Main {
             logger.info("Registering custom sets...");
             for (ExtensionPackage pkg : extensions) {
                 for (ExpansionSet set : pkg.getSets()) {
-                    logger.info("- Loading " + set.getName() + " (" + set.getCode() + ")");
+                    logger.info("- Loading " + set.getName() + " (" + set.getCode() + ')');
                     Sets.getInstance().addSet(set);
                 }
                 PluginClassloaderRegistery.registerPluginClassloader(pkg.getClassLoader());
@@ -275,10 +265,11 @@ public class Main {
         public void handleConnectionException(Throwable throwable, Client client) {
             Session session = SessionManager.getInstance().getSession(client.getSessionId());
             if (session != null) {
+
                 StringBuilder sessionInfo = new StringBuilder();
-                User user = UserManager.getInstance().getUser(session.getUserId());
-                if (user != null) {
-                    sessionInfo.append(user.getName()).append(" [").append(user.getGameInfo()).append("]");
+                Optional<User> user = UserManager.getInstance().getUser(session.getUserId());
+                if (user.isPresent()) {
+                    sessionInfo.append(user.get().getName()).append(" [").append(user.get().getGameInfo()).append(']');
                 } else {
                     sessionInfo.append("[user missing] ");
                 }
@@ -301,7 +292,9 @@ public class Main {
                         }
                     }
                 }
+
             }
+
         }
     }
 
@@ -409,7 +402,7 @@ public class Main {
         try {
             classLoader.addURL(new File(pluginFolder, plugin.getJar()).toURI().toURL());
             logger.debug("Loading game type: " + plugin.getClassName());
-            return (MatchType) Class.forName(plugin.getTypeName(), true, classLoader).newInstance();
+            return (MatchType) Class.forName(plugin.getTypeName(), true, classLoader).getConstructor().newInstance();
         } catch (ClassNotFoundException ex) {
             logger.warn("Game type not found:" + plugin.getJar() + " - check plugin folder", ex);
         } catch (Exception ex) {
@@ -422,7 +415,7 @@ public class Main {
         try {
             classLoader.addURL(new File(pluginFolder, plugin.getJar()).toURI().toURL());
             logger.debug("Loading tournament type: " + plugin.getClassName());
-            return (TournamentType) Class.forName(plugin.getTypeName(), true, classLoader).newInstance();
+            return (TournamentType) Class.forName(plugin.getTypeName(), true, classLoader).getConstructor().newInstance();
         } catch (ClassNotFoundException ex) {
             logger.warn("Tournament type not found:" + plugin.getName() + " / " + plugin.getJar() + " - check plugin folder", ex);
         } catch (Exception ex) {

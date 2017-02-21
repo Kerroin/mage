@@ -315,7 +315,7 @@ public class Spell extends StackObjImpl implements Card {
             boolean legalTargetedMode = false;
             for (UUID modeId : spellAbility.getModes().getSelectedModes()) {
                 Mode mode = spellAbility.getModes().get(modeId);
-                if (mode.getTargets().size() > 0) {
+                if (!mode.getTargets().isEmpty()) {
                     targetedMode = true;
                     if (mode.getTargets().stillLegal(spellAbility, game)) {
                         legalTargetedMode = true;
@@ -427,11 +427,18 @@ public class Spell extends StackObjImpl implements Card {
         } else {
             idName = getId().toString().substring(0, 3);
         }
-        return getName() + " [" + idName + "]";
+        return getName() + " [" + idName + ']';
     }
 
     @Override
     public String getLogName() {
+        if (faceDown) {
+            if (getCardType().contains(CardType.CREATURE)) {
+                return "face down creature spell";
+            } else {
+                return "face down spell";
+            }
+        }
         return GameLog.getColoredObjectIdName(card);
     }
 
@@ -451,7 +458,7 @@ public class Spell extends StackObjImpl implements Card {
 
     @Override
     public List<CardType> getCardType() {
-        if (this.getSpellAbility().getSpellAbilityType().equals(SpellAbilityType.FACE_DOWN_CREATURE)) {
+        if (faceDown) {
             List<CardType> cardTypes = new ArrayList<>();
             cardTypes.add(CardType.CREATURE);
             return cardTypes;

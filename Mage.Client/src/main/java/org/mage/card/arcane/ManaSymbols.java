@@ -17,6 +17,7 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -38,6 +39,23 @@ public class ManaSymbols {
     private static boolean mediumSymbolsFound = false;
 
     private static final Map<String, Map<String, Image>> setImages = new HashMap<>();
+
+    private static final HashSet<String> onlyMythics = new HashSet<>();
+    private static final HashSet<String> withoutSymbols = new HashSet<>();
+
+    static {
+        onlyMythics.add("DRB");
+        onlyMythics.add("V09");
+        onlyMythics.add("V12");
+        onlyMythics.add("V13");
+        onlyMythics.add("V14");
+        onlyMythics.add("V15");
+        onlyMythics.add("V16");
+        onlyMythics.add("EXP");
+        onlyMythics.add("MPS");
+
+        withoutSymbols.add("MPRP");
+    }
     private static final Map<String, Dimension> setImagesExist = new HashMap<>();
     private static final Pattern REPLACE_SYMBOLS_PATTERN = Pattern.compile("\\{([^}/]*)/?([^}]*)\\}");
     private static String cachedPath;
@@ -57,13 +75,21 @@ public class ManaSymbols {
             return;
         }
         for (String set : setCodes) {
-            String[] codes = new String[]{"C", "U", "R", "M"};
+            if (withoutSymbols.contains(set)) {
+                continue;
+            }
+            String[] codes;
+            if (onlyMythics.contains(set)) {
+                codes = new String[]{"M"};
+            } else {
+                codes = new String[]{"C", "U", "R", "M"};
+            }
 
             Map<String, Image> rarityImages = new HashMap<>();
             setImages.put(set, rarityImages);
 
             for (String rarityCode : codes) {
-                File file = new File(getSymbolsPath() + Constants.RESOURCE_PATH_SET + set + "-" + rarityCode + ".jpg");
+                File file = new File(getSymbolsPath() + Constants.RESOURCE_PATH_SET + set + '-' + rarityCode + ".jpg");
                 try {
                     Image image = UI.getImageIcon(file.getAbsolutePath()).getImage();
                     int width = image.getWidth(null);
@@ -72,7 +98,7 @@ public class ManaSymbols {
                         if (h > 0) {
                             Rectangle r = new Rectangle(21, (int) (h * 21.0f / width));
                             BufferedImage resized = ImageHelper.getResizedImage(BufferedImageBuilder.bufferImage(image, BufferedImage.TYPE_INT_ARGB), r);
-                            rarityImages.put(set, resized);
+                            rarityImages.put(rarityCode, resized);
                         }
                     } else {
                         rarityImages.put(rarityCode, image);
@@ -88,11 +114,11 @@ public class ManaSymbols {
                 }
 
                 for (String code : codes) {
-                    file = new File(getSymbolsPath() + Constants.RESOURCE_PATH_SET_SMALL + set + "-" + code + ".png");
+                    file = new File(getSymbolsPath() + Constants.RESOURCE_PATH_SET_SMALL + set + '-' + code + ".png");
                     if (file.exists()) {
                         continue;
                     }
-                    file = new File(getSymbolsPath() + Constants.RESOURCE_PATH_SET + set + "-" + code + ".jpg");
+                    file = new File(getSymbolsPath() + Constants.RESOURCE_PATH_SET + set + '-' + code + ".jpg");
                     Image image = UI.getImageIcon(file.getAbsolutePath()).getImage();
                     try {
                         int width = image.getWidth(null);
@@ -104,7 +130,7 @@ public class ManaSymbols {
                             }
                             Rectangle r = new Rectangle(15 + dx, (int) (height * (15.0f + dx) / width));
                             BufferedImage resized = ImageHelper.getResizedImage(BufferedImageBuilder.bufferImage(image, BufferedImage.TYPE_INT_ARGB), r);
-                            File newFile = new File(getSymbolsPath() + Constants.RESOURCE_PATH_SET_SMALL + File.separator + set + "-" + code + ".png");
+                            File newFile = new File(getSymbolsPath() + Constants.RESOURCE_PATH_SET_SMALL + File.separator + set + '-' + code + ".png");
                             ImageIO.write(resized, "png", newFile);
                         }
                     } catch (Exception e) {
@@ -145,7 +171,7 @@ public class ManaSymbols {
             resourcePath = Constants.RESOURCE_PATH_MANA_MEDIUM;
         }
         for (String symbol : symbols) {
-            File file = new File(getSymbolsPath() + resourcePath + "/" + symbol + ".gif");
+            File file = new File(getSymbolsPath() + resourcePath + '/' + symbol + ".gif");
             try {
 
                 if (size == 15 || size == 25) {
@@ -289,7 +315,7 @@ public class ManaSymbols {
         if (symbolFilesFound) {
             replaced = REPLACE_SYMBOLS_PATTERN.matcher(value).replaceAll(
                     "<img src='file:" + getSymbolsPath(true) + "/symbols/" + resourcePath + "/$1$2.gif' alt='$1$2' width=" + symbolSize
-                    + " height=" + symbolSize + ">");
+                    + " height=" + symbolSize + '>');
         }
         replaced = replaced.replace("|source|", "{source}");
         replaced = replaced.replace("|this|", "{this}");
@@ -302,7 +328,7 @@ public class ManaSymbols {
             int factor = size / 15 + 1;
             Integer width = setImagesExist.get(_set).width * factor;
             Integer height = setImagesExist.get(_set).height * factor;
-            return "<img src='file:" + getSymbolsPath() + "/sets/small/" + _set + "-" + rarity + ".png' alt='" + rarity + "' height='" + height + "' width='" + width + "' >";
+            return "<img src='file:" + getSymbolsPath() + "/sets/small/" + _set + '-' + rarity + ".png' alt='" + rarity + "' height='" + height + "' width='" + width + "' >";
         } else {
             return set;
         }

@@ -27,6 +27,7 @@
  */
 package mage.cards.m;
 
+import java.util.Objects;
 import java.util.UUID;
 import mage.MageObject;
 import mage.abilities.costs.mana.ManaCostsImpl;
@@ -104,7 +105,7 @@ class MysticRemoraTriggeredAbility extends TriggeredAbilityImpl {
                 if (spell != null && !spell.getCardType().contains(CardType.CREATURE)) {
                     Player controller = game.getPlayer(game.getControllerId(this.controllerId));
                     Player player = game.getPlayer(spell.getControllerId());
-                    if (controller != player) {
+                    if (!Objects.equals(controller, player)) {
                         this.getEffects().get(0).setTargetPointer(new FixedTarget(event.getPlayerId()));
                     }
                 return true;
@@ -145,7 +146,7 @@ class MysticRemoraTriggeredAbility extends TriggeredAbilityImpl {
             Cost cost = new GenericManaCost(4);
             String message = "Would you like to pay {4} to prevent the opponent to draw a card?";
             if (!(opponent.chooseUse(Outcome.Benefit, message, source, game) && cost.pay(source, game, source.getSourceId(), opponent.getId(), false, null))) {
-                if(controller.chooseUse(Outcome.DrawCard, "Draw a card (" + sourceObject.getLogName() +")", source, game)) {
+                if(controller.chooseUse(Outcome.DrawCard, "Draw a card (" + sourceObject.getLogName() + ')', source, game)) {
                     controller.drawCards(1, game);
                 }
             }

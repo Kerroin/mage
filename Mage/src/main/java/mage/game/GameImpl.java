@@ -29,20 +29,9 @@ package mage.game;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.Stack;
-import java.util.UUID;
+
 import mage.MageException;
 import mage.MageObject;
 import mage.abilities.Ability;
@@ -52,6 +41,7 @@ import mage.abilities.OpeningHandAction;
 import mage.abilities.SpellAbility;
 import mage.abilities.TriggeredAbility;
 import mage.abilities.common.AttachableToRestrictedAbility;
+import mage.abilities.common.CantHaveMoreThanAmountCountersSourceAbility;
 import mage.abilities.effects.ContinuousEffect;
 import mage.abilities.effects.ContinuousEffects;
 import mage.abilities.effects.Effect;
@@ -780,19 +770,19 @@ public abstract class GameImpl implements Game, Serializable {
         }
         if (gameOver(null) && !isSimulation()) {
             winnerId = findWinnersAndLosers();
-            StringBuilder sb = new StringBuilder("GAME END  gameId: ").append(this.getId()).append(" ");
+            StringBuilder sb = new StringBuilder("GAME END  gameId: ").append(this.getId()).append(' ');
             int count = 0;
             for (Player player : this.getState().getPlayers().values()) {
                 if (count > 0) {
                     sb.append(" - ");
                 }
-                sb.append("[").append(player.getName()).append(" => ");
+                sb.append('[').append(player.getName()).append(" => ");
                 sb.append(player.hasWon() ? "W" : "");
                 sb.append(player.hasLost() ? "L" : "");
                 sb.append(player.hasQuit() ? "Q" : "");
                 sb.append(player.hasIdleTimeout() ? "I" : "");
                 sb.append(player.hasTimerTimeout() ? "T" : "");
-                sb.append("]");
+                sb.append(']');
                 count++;
             }
             logger.info(sb.toString());
@@ -1898,7 +1888,7 @@ public abstract class GameImpl implements Game, Serializable {
             //20091005 - 704.5q If a creature is attached to an object or player, it becomes unattached and remains on the battlefield.
             // Similarly, if a permanent thats neither an Aura, an Equipment, nor a Fortification is attached to an object or player,
             // it becomes unattached and remains on the battlefield.
-            if (perm.getAttachments().size() > 0) {
+            if (!perm.getAttachments().isEmpty()) {
                 for (UUID attachmentId : perm.getAttachments()) {
                     Permanent attachment = getPermanent(attachmentId);
                     if (attachment != null
@@ -1923,6 +1913,19 @@ public abstract class GameImpl implements Game, Serializable {
                 perm.getCounters(this).removeCounter(CounterType.M1M1, min);
             }
 
+            // 20170120 - 704.5s
+            // If a permanent with an ability that says it can't have more than N counters of a certain kind on it
+            // has more than N counters of that kind on it, all but N of those counters are removed from it.
+            for (Ability ability : perm.getAbilities(this)) {
+                if (ability instanceof CantHaveMoreThanAmountCountersSourceAbility) {
+                    CantHaveMoreThanAmountCountersSourceAbility counterAbility = (CantHaveMoreThanAmountCountersSourceAbility) ability;
+                    int count = perm.getCounters(this).getCount(counterAbility.getCounterType());
+                    if (count > counterAbility.getAmount()) {
+                        perm.removeCounters(counterAbility.getCounterType().getName(), count - counterAbility.getAmount(), this);
+                        somethingHappened = true;
+                    }
+                }
+            }
         }
         //201300713 - 704.5j
         // If a player controls two or more planeswalkers that share a planeswalker type, that player
@@ -1996,7 +1999,7 @@ public abstract class GameImpl implements Game, Serializable {
                 }
             }
             for (Permanent permanent : worldEnchantment) {
-                if (newestPermanent != permanent) {
+                if (!Objects.equals(newestPermanent, permanent)) {
                     movePermanentToGraveyardWithInfo(permanent);
                     somethingHappened = true;
                 }

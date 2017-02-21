@@ -59,7 +59,7 @@ public class ExileFromGraveCost extends CostImpl {
                     + (target.getNumberOfTargets() == 1 && target.getMaxNumberOfTargets() == Integer.MAX_VALUE ? "one or more"
                             : ((target.getNumberOfTargets() < target.getMaxNumberOfTargets() ? "up to " : ""))
                             + CardUtil.numberToText(target.getMaxNumberOfTargets()))
-                    + " " + target.getTargetName();
+                    + ' ' + target.getTargetName();
         } else {
             this.text = "Exile " + target.getTargetName();
         }
@@ -95,11 +95,11 @@ public class ExileFromGraveCost extends CostImpl {
                     }
                     exiledCards.add(card);
                 }
+                Cards cardsToExile = new CardsImpl();
+                cardsToExile.addAll(exiledCards);
+                controller.moveCards(cardsToExile, Zone.EXILED, ability, game);
+                paid = true;
             }
-            Cards cardsToExile = new CardsImpl();
-            cardsToExile.addAll(exiledCards);
-            controller.moveCards(cardsToExile, Zone.EXILED, ability, game);
-            paid = true;
 
         }
         return paid;

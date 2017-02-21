@@ -121,9 +121,11 @@ public class DraftController {
         UUID playerId = userPlayerMap.get(userId);
         DraftSession draftSession = new DraftSession(draft, userId, playerId);
         draftSessions.put(playerId, draftSession);
-        UserManager.getInstance().getUser(userId).addDraft(playerId, draftSession);
-        logger.debug("User " + UserManager.getInstance().getUser(userId).getName() + " has joined draft " + draft.getId());
-        draft.getPlayer(playerId).setJoined();
+        UserManager.getInstance().getUser(userId).ifPresent(user-> {
+                    user.addDraft(playerId, draftSession);
+                    logger.debug("User " + user.getName() + " has joined draft " + draft.getId());
+                    draft.getPlayer(playerId).setJoined();
+                });
         checkStart();
     }
 
@@ -149,8 +151,7 @@ public class DraftController {
     private synchronized void checkStart() {
         if (!draft.isStarted() && allJoined()) {
             draft.setStarted();
-            ThreadExecutor.getInstance().getCallExecutor().execute(
-                    () -> startDraft());
+            ThreadExecutor.getInstance().getCallExecutor().execute(this::startDraft);
         }
     }
 
@@ -170,7 +171,7 @@ public class DraftController {
             return false;
         }
         for (DraftPlayer player: draft.getPlayers()) {
-            if (player.getPlayer().isHuman() && draftSessions.get(player.getPlayer().getId()) == null) {
+            if (player.getPlayer().isHuman() && !draftSessions.containsKey(player.getPlayer().getId())) {
                 return false;
             }
         }

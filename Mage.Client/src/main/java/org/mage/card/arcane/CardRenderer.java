@@ -14,7 +14,6 @@ import java.awt.Paint;
 import java.awt.Polygon;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-
 import mage.client.dialog.PreferencesDialog;
 import mage.constants.AbilityType;
 import mage.constants.CardType;
@@ -22,7 +21,6 @@ import mage.utils.CardUtil;
 import mage.view.CardView;
 import mage.view.CounterView;
 import mage.view.PermanentView;
-import org.apache.log4j.Logger;
 
 /**
  * @author stravant@gmail.com
@@ -56,8 +54,6 @@ import org.apache.log4j.Logger;
  *
  */
 public abstract class CardRenderer {
-
-    private static final Logger LOGGER = Logger.getLogger(CardPanel.class);
 
     ///////////////////////////////////////////////////////////////////////////
     // Common layout metrics between all cards
@@ -171,11 +167,12 @@ public abstract class CardRenderer {
     }
 
     /**
-     * How far does a card have to be spaced down from
-     * a rendered card to show it's entire name line?
-     * This function is a bit of a hack, as different card faces need
-     * slightly different spacing, but we need it in a static context
-     * so that spacing is consistent in GY / deck views etc.
+     * How far does a card have to be spaced down from a rendered card to show
+     * it's entire name line? This function is a bit of a hack, as different
+     * card faces need slightly different spacing, but we need it in a static
+     * context so that spacing is consistent in GY / deck views etc.
+     *
+     * @param cardWidth
      * @return
      */
     public static int getCardTopHeight(int cardWidth) {
@@ -186,7 +183,7 @@ public abstract class CardRenderer {
                 BOX_HEIGHT_MIN,
                 BOX_HEIGHT_FRAC * cardWidth * 1.4f);
         int borderWidth = getBorderWidth(cardWidth);
-        return 2*borderWidth + boxHeight;
+        return 2 * borderWidth + boxHeight;
     }
 
     // The Draw Method
@@ -293,7 +290,7 @@ public abstract class CardRenderer {
                     g2.setColor(Color.black);
                     g2.drawPolygon(p);
                     g2.setFont(new Font("Arial", Font.BOLD, 7));
-                    String cstr = "" + v.getCount();
+                    String cstr = String.valueOf(v.getCount());
                     int strW = g2.getFontMetrics().stringWidth(cstr);
                     g2.drawString(cstr, 5 - strW / 2, 8);
                     g2.dispose();
@@ -383,15 +380,15 @@ public abstract class CardRenderer {
         } else {
             StringBuilder sbType = new StringBuilder();
             for (String superType : cardView.getSuperTypes()) {
-                sbType.append(superType).append(" ");
+                sbType.append(superType).append(' ');
             }
             for (CardType cardType : cardView.getCardTypes()) {
-                sbType.append(cardType.toString()).append(" ");
+                sbType.append(cardType.toString()).append(' ');
             }
-            if (cardView.getSubTypes().size() > 0) {
+            if (!cardView.getSubTypes().isEmpty()) {
                 sbType.append("- ");
                 for (String subType : cardView.getSubTypes()) {
-                    sbType.append(subType).append(" ");
+                    sbType.append(subType).append(' ');
                 }
             }
             return sbType.toString();

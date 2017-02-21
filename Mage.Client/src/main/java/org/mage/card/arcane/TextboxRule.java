@@ -23,6 +23,7 @@ public class TextboxRule {
 
     // An attributed region in the text, which can be applied to an
     // attributed string.
+    @FunctionalInterface
     public interface AttributeRegion {
 
         void applyToAttributedString(AttributedString str, Font normal, Font italic);
@@ -87,7 +88,7 @@ public class TextboxRule {
         // Do it in reverse order for proper handling of regions where
         // there are multiple attributes stacked (EG: bold + italic)
         AttributedString attributedRule = new AttributedString(text);
-        if (text.length() != 0) {
+        if (!text.isEmpty()) {
             attributedRule.addAttribute(TextAttribute.FONT, normal);
             for (int i = regions.size() - 1; i >= 0; --i) {
                 regions.get(i).applyToAttributedString(attributedRule, normal, italic);

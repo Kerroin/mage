@@ -27,22 +27,19 @@
  */
 package mage.server;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import mage.cards.repository.CardInfo;
 import mage.cards.repository.CardRepository;
+import mage.server.exceptions.UserNotFoundException;
 import mage.server.util.SystemUtil;
 import mage.view.ChatMessage.MessageColor;
 import mage.view.ChatMessage.MessageType;
 import mage.view.ChatMessage.SoundToPlay;
 import org.apache.log4j.Logger;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author BetaSteward_at_googlemail.com
@@ -110,13 +107,6 @@ public class ChatManager {
         this.broadcast(chatId, userName, message, color, withTime, messageType, null);
     }
 
-    private boolean containsSwearing(String message) {
-        if (message != null && message.toLowerCase().matches("^.*(anal|asshole|balls|bastard|bitch|blowjob|cock|crap|cunt|cum|damn|dick|dildo|douche|fag|fuck|idiot|moron|penis|piss|prick|pussy|rape|rapist|sex|screw|shit|slut|vagina).*$")) {
-            return true;
-        }
-        return false;
-    }
-
     final Pattern cardNamePattern = Pattern.compile("\\[(.*?)\\]");
 
     public void broadcast(UUID chatId, String userName, String message, MessageColor color, boolean withTime, MessageType messageType, SoundToPlay soundToPlay) {
@@ -134,13 +124,17 @@ public class ChatManager {
 
             if (messageType != MessageType.GAME) {
                 User user = UserManager.getInstance().getUserByName(userName);
-                if (message != null && userName != null && !userName.equals("")) {
+                if (message != null && userName != null && !userName.isEmpty()) {
 
                     if (message.equals(userMessages.get(userName))) {
                         // prevent identical messages
                         String informUser = "Your message appears to be identical to your last message";
                         chatSessions.get(chatId).broadcastInfoToUser(user, informUser);
                         return;
+                    }
+                    
+                    if (message.length() > 500) {                        
+                        message = message.replaceFirst("^(.{500}).*", "$1 (rest of message truncated)");
                     }
 
                     String messageToCheck = message;
@@ -164,17 +158,12 @@ public class ChatManager {
                                 colour = "green";
                             }
                             messageToCheck = messageToCheck.replaceFirst("\\[" + cardName + "\\]", "card");
-                            String displayCardName = "<font bgcolor=orange color=" + colour + ">" + cardName + "</font>";
+                            String displayCardName = "<font bgcolor=orange color=" + colour + '>' + cardName + "</font>";
                             message = message.replaceFirst("\\[" + cardName + "\\]", displayCardName);
                         }
                     }
 
                     userMessages.put(userName, message);
-                    if (containsSwearing(messageToCheck)) {
-                        String informUser = "Your message appears to contain profanity";
-                        chatSessions.get(chatId).broadcastInfoToUser(user, informUser);
-                        return;
-                    }
                 }
 
                 if (messageType == MessageType.TALK) {
@@ -207,6 +196,7 @@ public class ChatManager {
         String command = message.substring(1).trim().toUpperCase(Locale.ENGLISH);
         if (doError) {
             message += new StringBuilder("<br/>Invalid User Command '" + message + "'.").append(COMMANDS_LIST).toString();
+            message += "<br/>Type <font color=green>\\w " + user.getName() + " profanity 0 (or 1 or 2)</font> to use/not use the profanity filter";
             chatSessions.get(chatId).broadcastInfoToUser(user, message);
             return true;
         }
@@ -223,7 +213,7 @@ public class ChatManager {
         }
         if (command.startsWith("W ") || command.startsWith("WHISPER ")) {
             String rest = message.substring(command.startsWith("W ") ? 3 : 9);
-            int first = rest.indexOf(" ");
+            int first = rest.indexOf(' ');
             if (first > 1) {
                 String userToName = rest.substring(0, first);
                 rest = rest.substring(first + 1).trim();
@@ -242,6 +232,7 @@ public class ChatManager {
         }
         if (command.equals("L") || command.equals("LIST")) {
             message += COMMANDS_LIST;
+            message += "<br/>Type <font color=green>\\w " + user.getName() + " profanity 0 (or 1 or 2)</font> to use/not use the profanity filter";
             chatSessions.get(chatId).broadcastInfoToUser(user, message);
             return true;
         }
@@ -256,26 +247,23 @@ public class ChatManager {
      * @param message
      * @param color
      */
-    public void broadcast(UUID userId, String message, MessageColor color) {
-        User user = UserManager.getInstance().getUser(userId);
-        if (user != null) {
-            for (ChatSession chat : chatSessions.values()) {
-                if (chat.hasUser(userId)) {
-                    chat.broadcast(user.getName(), message, color, true, MessageType.TALK, null);
-                }
-            }
-        }
+    public void broadcast(UUID userId, String message, MessageColor color) throws UserNotFoundException {
+        UserManager.getInstance().getUser(userId).ifPresent(user-> {
+            chatSessions.values()
+                    .stream()
+                    .filter(chat -> chat.hasUser(userId))
+                    .forEach(session -> session.broadcast(user.getName(), message, color, true, MessageType.TALK, null));
+
+        });
     }
 
     public void sendReconnectMessage(UUID userId) {
-        User user = UserManager.getInstance().getUser(userId);
-        if (user != null) {
-            for (ChatSession chat : chatSessions.values()) {
-                if (chat.hasUser(userId)) {
-                    chat.broadcast(null, user.getName() + " has reconnected", MessageColor.BLUE, true, MessageType.STATUS, null);
-                }
-            }
-        }
+        UserManager.getInstance().getUser(userId).ifPresent(user ->
+                chatSessions.values()
+                        .stream()
+                        .filter(chat -> chat.hasUser(userId))
+                        .forEach(chatSession -> chatSession.broadcast(null, user.getName() + " has reconnected", MessageColor.BLUE, true, MessageType.STATUS, null)));
+
     }
 
     public void removeUser(UUID userId, DisconnectReason reason) {
@@ -287,8 +275,9 @@ public class ChatManager {
     }
 
     public ArrayList<ChatSession> getChatSessions() {
-        ArrayList<ChatSession> chatSessionList = new ArrayList<>();
-        chatSessionList.addAll(chatSessions.values());
-        return chatSessionList;
+        return new ArrayList<>(chatSessions.values());
     }
+
+
 }
+

@@ -190,7 +190,7 @@ public class LookLibraryAndPickControllerEffect extends LookLibraryControllerEff
                 if (player.choose(Outcome.DrawCard, cards, target, game)) {
                     Cards pickedCards = new CardsImpl(target.getTargets());
                     cards.removeAll(pickedCards);
-                    if (targetPickedCards.equals(Zone.LIBRARY) && !putOnTopSelected) {
+                    if (targetPickedCards == Zone.LIBRARY && !putOnTopSelected) {
                         player.putCardsOnBottomOfLibrary(pickedCards, game, source, true);
                     } else {
                         player.moveCards(pickedCards.getCards(game), targetPickedCards, source, game);
@@ -222,7 +222,7 @@ public class LookLibraryAndPickControllerEffect extends LookLibraryControllerEff
                 sb.append("put ").append(filter.getMessage()).append(" into your graveyard");
                 break;
         }
-        return sb.append("?").toString();
+        return sb.append('?').toString();
     }
 
     private String getPickText() {

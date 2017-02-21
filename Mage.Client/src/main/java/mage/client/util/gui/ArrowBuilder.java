@@ -7,12 +7,12 @@ import java.util.List;
 
 /**
  * Class for dealing with arrows in the game.
- * 
+ *
  * @author nantuko, noxx
  */
 public class ArrowBuilder {
 
-    private static final ArrowBuilder instance;
+    private static ArrowBuilder instance;
 
     static {
         instance = new ArrowBuilder();
@@ -33,12 +33,12 @@ public class ArrowBuilder {
     private final Map<UUID, JPanel> arrowPanels = new HashMap<UUID, JPanel>();
 
     private final Map<UUID, Map<Type, List<Arrow>>> map = new HashMap<UUID, Map<Type, java.util.List<Arrow>>>();
-    
+
     private int currentWidth;
     private int currentHeight;
 
     public enum Type {
-        PAIRED, SOURCE, TARGET, COMBAT, ENCHANT_PLAYERS
+        PAIRED, SOURCE, TARGET, COMBAT, ENCHANT_PLAYERS;
     }
 
     /**
@@ -58,7 +58,7 @@ public class ArrowBuilder {
         }
         return arrowsManagerPanel;
     }
-    
+
     private JPanel getArrowsPanel(UUID gameId) {
         if (!arrowPanels.containsKey(gameId)) {
             JPanel arrowPanel = new JPanel();
@@ -77,7 +77,7 @@ public class ArrowBuilder {
      * Not synchronized method for arrows panel.
      * Doesn't create JPanel in case the panel doesn't exist.
      * Works faster.
-     * 
+     *
      * @return
      */
     /*public JPanel getPanelRef() {
@@ -86,7 +86,7 @@ public class ArrowBuilder {
 
     /**
      * Adds new arrow.
-     * 
+     *
      * @param startX
      * @param startY
      * @param endX
@@ -103,8 +103,16 @@ public class ArrowBuilder {
 
         synchronized (map) {
             p.add(arrow);
-            Map<Type, java.util.List<Arrow>> innerMap = map.computeIfAbsent(gameId, k -> new HashMap<Type, List<Arrow>>());
-            java.util.List<Arrow> arrows = innerMap.computeIfAbsent(type, k -> new ArrayList<Arrow>());
+            Map<Type, java.util.List<Arrow>> innerMap = map.get(gameId);
+            if (innerMap == null) {
+                innerMap = new HashMap<Type, List<Arrow>>();
+                map.put(gameId, innerMap);
+            }
+            java.util.List<Arrow> arrows = innerMap.get(type);
+            if (arrows == null) {
+                arrows = new ArrayList<Arrow>();
+                innerMap.put(type, arrows);
+            }
             arrows.add(arrow);
         }
 
@@ -148,7 +156,7 @@ public class ArrowBuilder {
             }
         }
     }
-    
+
     public void setSize(int width, int height) {
         this.currentWidth = width;
         this.currentHeight = height;

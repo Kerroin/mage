@@ -311,7 +311,7 @@ public class ModernCardRenderer extends CardRenderer {
         Rectangle2D rect;
         if (useInventionFrame()) {
             rect = new Rectangle2D.Float(0, 0, 1, 1);
-        } else if (cardView.getFrameStyle().isFullArt() || cardView.isToken()) {
+        } else if (cardView.getFrameStyle().isFullArt() || (cardView.isToken())) {
             rect = new Rectangle2D.Float(.079f, .11f, .84f, .63f);
         } else {
             rect = new Rectangle2D.Float(.079f, .11f, .84f, .42f);
@@ -320,7 +320,7 @@ public class ModernCardRenderer extends CardRenderer {
     }
 
     private float getTypeLineYFrac() {
-        if (cardView.isToken()) {
+        if (cardView.isToken() && cardView.getCardNumber() == null) {
             return TYPE_LINE_Y_FRAC_TOKEN;
         } else if (cardView.getFrameStyle().isFullArt()) {
             return TYPE_LINE_Y_FRAC_FULL_ART;
@@ -638,7 +638,7 @@ public class ModernCardRenderer extends CardRenderer {
             }
             g.setColor(textColor);
             g.setFont(ptTextFont);
-            String ptText = cardView.getPower() + "/" + cardView.getToughness();
+            String ptText = cardView.getPower() + '/' + cardView.getToughness();
             int ptTextWidth = g.getFontMetrics().stringWidth(ptText);
             g.drawString(ptText,
                     x + (partWidth - ptTextWidth) / 2, curY - ptTextOffset - 1);
@@ -707,7 +707,7 @@ public class ModernCardRenderer extends CardRenderer {
         if ((cardView instanceof PermanentView) && ((PermanentView) cardView).getDamage() > 0) {
             int x = cardWidth - partWidth - borderWidth;
             int y = curY - boxHeight;
-            String damage = "" + ((PermanentView) cardView).getDamage();
+            String damage = String.valueOf(((PermanentView) cardView).getDamage());
             g.setFont(ptTextFont);
             int txWidth = g.getFontMetrics().stringWidth(damage);
             g.setColor(Color.red);
@@ -986,7 +986,7 @@ public class ModernCardRenderer extends CardRenderer {
             g.setColor(Color.black);
             g.fillOval(borderWidth + 1, totalContentInset + 1, boxHeight - 2, boxHeight - 2);
             g.setColor(Color.white);
-            if (isNightCard()) {
+            if (isTransformed) {
                 g.fillArc(borderWidth + 3, totalContentInset + 3, boxHeight - 6, boxHeight - 6, 90, 270);
                 g.setColor(Color.black);
                 g.fillArc(borderWidth + 3 + 3, totalContentInset + 3, boxHeight - 6 - 3, boxHeight - 6, 90, 270);
@@ -1012,7 +1012,7 @@ public class ModernCardRenderer extends CardRenderer {
 
     // Determine the color of the name / type line text
     protected Color getBoxTextColor() {
-        if (isNightCard()) {
+        if (isTransformed) {
             return Color.white;
         } else if (cardView.isAbility()) {
             return Color.white;

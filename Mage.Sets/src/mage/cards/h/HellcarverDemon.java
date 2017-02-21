@@ -27,6 +27,7 @@
  */
 package mage.cards.h;
 
+import java.util.Objects;
 import java.util.UUID;
 import mage.constants.CardType;
 import mage.MageInt;
@@ -95,12 +96,12 @@ class HellcarverDemonEffect extends OneShotEffect {
         Permanent hellcarverDemon = game.getPermanent(source.getSourceId());
 
         for (Permanent permanent: game.getBattlefield().getActivePermanents(filterPermanents, source.getControllerId(), game)) {
-            if (permanent != hellcarverDemon) {
+            if (!Objects.equals(permanent, hellcarverDemon)) {
                 permanent.sacrifice(source.getSourceId(), game);
             }
         }
 
-        if (player != null && player.getHand().size() > 0) {
+        if (player != null && !player.getHand().isEmpty()) {
             int cardsInHand = player.getHand().size();
             player.discard(cardsInHand, source, game);
         }

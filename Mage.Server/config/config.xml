@@ -72,6 +72,7 @@
         <gameType name="Commander Two Player Duel" jar="mage-game-commanderduel.jar" className="mage.game.CommanderDuelMatch" typeName="mage.game.CommanderDuelType"/>
         <gameType name="Commander Free For All" jar="mage-game-commanderfreeforall.jar" className="mage.game.CommanderFreeForAllMatch" typeName="mage.game.CommanderFreeForAllType"/>
         <gameType name="Tiny Leaders Two Player Duel" jar="mage-game-tinyleadersduel.jar" className="mage.game.TinyLeadersDuelMatch" typeName="mage.game.TinyLeadersDuelType"/>
+        <gameType name="Canadian Highlander Two Player Duel" jar="mage-game-canadianhighlanderduel.jar" className="mage.game.CanadianHighlanderDuelMatch" typeName="mage.game.CanadianHighlanderDuelType"/>
         <gameType name="Momir Basic Two Player Duel" jar="mage-game-momirduel.jar" className="mage.game.MomirDuelMatch" typeName="mage.game.MomirDuelType"/>
     </gameTypes>
     <tournamentTypes>
@@ -107,6 +108,7 @@
         <draftCube name="MTGO Legacy Cube September 2015" jar="mage-tournament-booster-draft.jar" className="mage.tournament.cubes.LegacyCubeSeptember2015"/>
         <draftCube name="MTGO Legacy Cube January 2016" jar="mage-tournament-booster-draft.jar" className="mage.tournament.cubes.LegacyCubeJanuary2016"/>
         <draftCube name="MTGO Legacy Cube September 2016" jar="mage-tournament-booster-draft.jar" className="mage.tournament.cubes.LegacyCubeSeptember2016"/>
+        <draftCube name="MTGO Legacy Cube January 2017" jar="mage-tournament-booster-draft.jar" className="mage.tournament.cubes.LegacyCubeJanuary2017"/>
         <draftCube name="MTGO Legendary Cube" jar="mage-tournament-booster-draft.jar" className="mage.tournament.cubes.LegendaryCube"/>
         <draftCube name="MTGO Legendary Cube April 2016" jar="mage-tournament-booster-draft.jar" className="mage.tournament.cubes.LegendaryCubeApril2016"/>
         <draftCube name="MTGO Vintage Cube 2013" jar="mage-tournament-booster-draft.jar" className="mage.tournament.cubes.VintageCube2013"/>
@@ -135,6 +137,7 @@
         <deckType name="Variant Magic - Commander" jar="mage-deck-constructed.jar" className="mage.deck.Commander"/>
         <deckType name="Variant Magic - Duel Commander" jar="mage-deck-constructed.jar" className="mage.deck.DuelCommander"/>
         <deckType name="Variant Magic - Tiny Leaders" jar="mage-deck-constructed.jar" className="mage.deck.TinyLeaders"/>
+        <deckType name="Variant Magic - Canadian Highlander" jar="mage-deck-constructed.jar" className="mage.deck.CanadianHighlander"/>
         <deckType name="Variant Magic - Momir Basic" jar="mage-deck-constructed.jar" className="mage.deck.Momir"/>
         <deckType name="Block Constructed - Battle for Zendikar" jar="mage-deck-constructed.jar" className="mage.deck.BattleForZendikarBlock"/>
         <deckType name="Block Constructed - Innistrad" jar="mage-deck-constructed.jar" className="mage.deck.InnistradBlock"/>
