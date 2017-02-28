@@ -27,8 +27,6 @@ import org.mage.test.player.TestPlayer;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -164,12 +162,7 @@ public abstract class MageTestBase {
             directory.mkdirs();
         }
         File[] files = directory.listFiles(
-                new FilenameFilter() {
-                    @Override
-                    public boolean accept(File dir, String name) {
-                        return name.endsWith(".game");
-                    }
-                }
+                (dir, name) -> name.endsWith(".game")
         );
         for (File file : files) {
             file.delete();
@@ -297,7 +290,8 @@ public abstract class MageTestBase {
     }
 
     protected Player createPlayer(String name, String playerType) {
-        return PlayerFactory.getInstance().createPlayer(playerType, name, RangeOfInfluence.ALL, 5);
+        Optional<Player> playerOptional = PlayerFactory.getInstance().createPlayer(playerType, name, RangeOfInfluence.ALL, 5);
+        return playerOptional.orElseThrow(() -> new NullPointerException("PlayerFactory error - player is not created"));
     }
 
     protected Player createRandomPlayer(String name) {
