@@ -100,10 +100,10 @@ public class ShapeAnew extends CardImpl {
             Card artifactCard = null;
             Cards nonArtifactCards = new CardsImpl();
             Player targetController = game.getPlayer(sourcePermanent.getControllerId());
-            while (artifactCard == null && targetController.getLibrary().size() > 0) {
+            while (artifactCard == null && targetController.getLibrary().hasCards()) {
                 Card card = targetController.getLibrary().removeFromTop(game);
                 revealed.add(card);
-                if (card.getCardType().contains(CardType.ARTIFACT)) {
+                if (card.isArtifact()) {
                     artifactCard = card;
                 } else {
                     nonArtifactCards.add(card);

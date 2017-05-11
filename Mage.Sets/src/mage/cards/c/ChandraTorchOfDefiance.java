@@ -27,8 +27,6 @@
  */
 package mage.cards.c;
 
-import java.util.UUID;
-
 import mage.MageObject;
 import mage.Mana;
 import mage.abilities.Ability;
@@ -56,6 +54,8 @@ import mage.players.Library;
 import mage.players.Player;
 import mage.target.common.TargetCreatureOrPlayer;
 import mage.target.common.TargetCreaturePermanent;
+
+import java.util.UUID;
 
 /**
  * @author fireshoes
@@ -114,14 +114,14 @@ class ChandraTorchOfDefianceEffect extends OneShotEffect {
     public boolean apply(Game game, Ability source) {
         Player controller = game.getPlayer(source.getControllerId());
         MageObject sourceObject = source.getSourceObject(game);
-        if (controller != null && sourceObject != null && controller.getLibrary().size() > 0) {
+        if (controller != null && sourceObject != null && controller.getLibrary().hasCards()) {
             Library library = controller.getLibrary();
             Card card = library.removeFromTop(game);
             if (card != null) {
                 boolean exiledCardWasCast = false;
                 controller.moveCardToExileWithInfo(card, source.getSourceId(), sourceObject.getIdName(), source.getSourceId(), game, Zone.LIBRARY, true);
                 if (!card.getManaCost().isEmpty())
-                    if (controller.chooseUse(Outcome.Benefit, "Cast the card? (You still pay the costs)", source, game) && !card.getCardType().contains(CardType.LAND)) {
+                    if (controller.chooseUse(Outcome.Benefit, "Cast the card? (You still pay the costs)", source, game) && !card.isLand()) {
 //                    LinkedHashMap<UUID, ActivatedAbility> useableAbilities = controller.getUseableActivatedAbilities(card, Zone.EXILED, game);
 //                    for (ActivatedAbility ability : useableAbilities.values()) {
 //

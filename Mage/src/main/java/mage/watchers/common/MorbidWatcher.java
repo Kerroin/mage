@@ -44,7 +44,7 @@ import mage.watchers.Watcher;
 public class MorbidWatcher extends Watcher {
 
     public MorbidWatcher() {
-        super("Morbid", WatcherScope.GAME);
+        super(MorbidWatcher.class.getSimpleName(), WatcherScope.GAME);
     }
 
     public MorbidWatcher(final MorbidWatcher watcher) {
@@ -58,7 +58,7 @@ public class MorbidWatcher extends Watcher {
         }
         if (event.getType() == GameEvent.EventType.ZONE_CHANGE && ((ZoneChangeEvent)event).isDiesEvent()) {
             Permanent p = (Permanent) game.getLastKnownInformation(event.getTargetId(), Zone.BATTLEFIELD);
-            if (p != null && p.getCardType().contains(CardType.CREATURE)) {
+            if (p != null && p.isCreature()) {
                 condition = true;
             }
         }

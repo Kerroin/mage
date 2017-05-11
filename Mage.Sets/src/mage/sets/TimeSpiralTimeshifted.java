@@ -27,11 +27,11 @@
  */
 package mage.sets;
 
+import mage.cards.ExpansionSet;
 import mage.cards.i.IcatianJavelineers;
 import mage.cards.s.SwampMosquito;
-import mage.constants.SetType;
-import mage.cards.ExpansionSet;
 import mage.constants.Rarity;
+import mage.constants.SetType;
 
 /**
  *
@@ -39,10 +39,10 @@ import mage.constants.Rarity;
  */
 public class TimeSpiralTimeshifted extends ExpansionSet {
 
-    private static final TimeSpiralTimeshifted fINSTANCE = new TimeSpiralTimeshifted();
+    private static final TimeSpiralTimeshifted instance = new TimeSpiralTimeshifted();
 
     public static TimeSpiralTimeshifted getInstance() {
-        return fINSTANCE;
+        return instance;
     }
 
     private TimeSpiralTimeshifted() {

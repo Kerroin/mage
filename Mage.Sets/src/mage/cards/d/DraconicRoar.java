@@ -27,8 +27,6 @@
  */
 package mage.cards.d;
 
-import java.util.UUID;
-
 import mage.abilities.Ability;
 import mage.abilities.costs.common.RevealTargetFromHandCost;
 import mage.abilities.effects.OneShotEffect;
@@ -47,6 +45,8 @@ import mage.players.Player;
 import mage.target.common.TargetCardInHand;
 import mage.target.common.TargetCreaturePermanent;
 import mage.watchers.common.DragonOnTheBattlefieldWhileSpellWasCastWatcher;
+
+import java.util.UUID;
 
 /**
  *
@@ -75,7 +75,7 @@ public class DraconicRoar extends CardImpl {
 
     @Override
     public void adjustCosts(Ability ability, Game game) {
-        if (ability.getAbilityType().equals(AbilityType.SPELL)) {
+        if (ability.getAbilityType() == AbilityType.SPELL) {
             Player controller = game.getPlayer(ability.getControllerId());
             if (controller != null) {
                 if (controller.getHand().count(filter, game) > 0) {
@@ -116,7 +116,7 @@ class DraconicRoarEffect extends OneShotEffect {
     public boolean apply(Game game, Ability source) {
         Player controller = game.getPlayer(source.getControllerId());
         if (controller != null) {
-            DragonOnTheBattlefieldWhileSpellWasCastWatcher watcher = (DragonOnTheBattlefieldWhileSpellWasCastWatcher) game.getState().getWatchers().get("DragonOnTheBattlefieldWhileSpellWasCastWatcher");
+            DragonOnTheBattlefieldWhileSpellWasCastWatcher watcher = (DragonOnTheBattlefieldWhileSpellWasCastWatcher) game.getState().getWatchers().get(DragonOnTheBattlefieldWhileSpellWasCastWatcher.class.getSimpleName());
             if (watcher != null && watcher.castWithConditionTrue(source.getId())) {
                 Permanent permanent = game.getPermanentOrLKIBattlefield(getTargetPointer().getFirst(game, source));
                 if (permanent != null) {

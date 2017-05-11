@@ -1,9 +1,9 @@
 package mage.sets;
 
-import mage.cards.ExpansionSet;
-import mage.constants.SetType;
-import mage.constants.Rarity;
 import mage.cards.CardGraphicInfo;
+import mage.cards.ExpansionSet;
+import mage.constants.Rarity;
+import mage.constants.SetType;
 
 /**
  *
@@ -11,10 +11,10 @@ import mage.cards.CardGraphicInfo;
  */
 public class RevisedEdition extends ExpansionSet {
 
-    private static final RevisedEdition fINSTANCE = new RevisedEdition();
+    private static final RevisedEdition instance = new RevisedEdition();
 
     public static RevisedEdition getInstance() {
-        return fINSTANCE;
+        return instance;
     }
 
     private RevisedEdition() {

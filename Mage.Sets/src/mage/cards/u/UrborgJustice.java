@@ -92,7 +92,7 @@ class UrborgJusticeDynamicValue implements DynamicValue {
 
     @Override
     public int calculate(Game game, Ability sourceAbility, Effect effect) {
-        CardsPutIntoGraveyardWatcher watcher = (CardsPutIntoGraveyardWatcher) game.getState().getWatchers().get("CardsPutIntoGraveyardWatcher");
+        CardsPutIntoGraveyardWatcher watcher = (CardsPutIntoGraveyardWatcher) game.getState().getWatchers().get(CardsPutIntoGraveyardWatcher.class.getSimpleName());
 
         int count = 0;
         Player controller = game.getPlayer(sourceAbility.getControllerId());
@@ -101,7 +101,7 @@ class UrborgJusticeDynamicValue implements DynamicValue {
             for (MageObjectReference mor : cardsInGraveyard) {
                 if (game.getState().getZoneChangeCounter(mor.getSourceId()) == mor.getZoneChangeCounter()) {
                     Card card = game.getCard(mor.getSourceId());
-                    if (card != null && card.getOwnerId().equals(sourceAbility.getControllerId()) && card.getCardType().contains(CardType.CREATURE)) {
+                    if (card != null && card.getOwnerId().equals(sourceAbility.getControllerId()) && card.isCreature()) {
                         count++;
                     }
                 }

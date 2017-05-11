@@ -37,18 +37,11 @@ import java.util.HashMap;
  *
  * @author spjspj
  */
-public class MtgOnlTokensImageSource implements CardImageSource {
+public enum MtgOnlTokensImageSource implements CardImageSource {
 
+    instance;
     private static final Logger logger = Logger.getLogger(MtgOnlTokensImageSource.class);
-    private static CardImageSource instance = new MtgOnlTokensImageSource();
     private static int maxTimes = 0;
-
-    public static CardImageSource getInstance() {
-        if (instance == null) {
-            instance = new MtgOnlTokensImageSource();
-        }
-        return instance;
-    }
 
     @Override
     public String getSourceName() {
@@ -56,7 +49,7 @@ public class MtgOnlTokensImageSource implements CardImageSource {
     }
 
     @Override
-    public Float getAverageSize() {
+    public float getAverageSize() {
         return 26.7f;
     }
 
@@ -366,7 +359,7 @@ public class MtgOnlTokensImageSource implements CardImageSource {
     }
 
     @Override
-    public Integer getTotalImages() {
+    public int getTotalImages() {
         if (copyUrlToImage == null) {
             setupLinks();
         }
@@ -377,7 +370,7 @@ public class MtgOnlTokensImageSource implements CardImageSource {
     }
     
     @Override
-    public Boolean isTokenSource() {
+    public boolean isTokenSource() {
         return true;
     }
     

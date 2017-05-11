@@ -27,6 +27,7 @@
  */
 package mage.sets;
 
+import mage.cards.CardGraphicInfo;
 import mage.cards.ExpansionSet;
 import mage.cards.a.AbbeyMatron;
 import mage.cards.a.AlibansTower;
@@ -40,9 +41,8 @@ import mage.cards.r.ReefPirates;
 import mage.cards.s.SengirBats;
 import mage.cards.t.Torture;
 import mage.cards.w.WillowFaerie;
-import mage.constants.SetType;
 import mage.constants.Rarity;
-import mage.cards.CardGraphicInfo;
+import mage.constants.SetType;
 
 /**
  *
@@ -50,10 +50,10 @@ import mage.cards.CardGraphicInfo;
  */
 public class Homelands extends ExpansionSet {
 
-    private static final Homelands fINSTANCE = new Homelands();
+    private static final Homelands instance = new Homelands();
 
     public static Homelands getInstance() {
-        return fINSTANCE;
+        return instance;
     }
 
     private Homelands() {

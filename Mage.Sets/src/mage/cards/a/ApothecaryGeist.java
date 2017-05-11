@@ -27,8 +27,8 @@
  */
 package mage.cards.a;
 
-import java.util.UUID;
 import mage.MageInt;
+import mage.constants.ComparisonType;
 import mage.abilities.TriggeredAbility;
 import mage.abilities.common.EntersBattlefieldTriggeredAbility;
 import mage.abilities.condition.common.PermanentsOnTheBattlefieldCondition;
@@ -41,6 +41,8 @@ import mage.constants.CardType;
 import mage.filter.common.FilterControlledPermanent;
 import mage.filter.predicate.mageobject.SubtypePredicate;
 import mage.filter.predicate.permanent.AnotherPredicate;
+
+import java.util.UUID;
 
 /**
  *
@@ -68,7 +70,7 @@ public class ApothecaryGeist extends CardImpl {
         TriggeredAbility triggeredAbility = new EntersBattlefieldTriggeredAbility(new GainLifeEffect(3));
         this.addAbility(new ConditionalTriggeredAbility(
                 triggeredAbility,
-                new PermanentsOnTheBattlefieldCondition(filter, PermanentsOnTheBattlefieldCondition.CountType.MORE_THAN, 0),
+                new PermanentsOnTheBattlefieldCondition(filter, ComparisonType.MORE_THAN, 0),
                 "When {this} enters the battlefield, if you control another Spirit, you gain 3 life."));
     }
 

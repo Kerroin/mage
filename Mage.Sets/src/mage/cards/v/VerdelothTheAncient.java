@@ -43,6 +43,7 @@ import mage.cards.CardImpl;
 import mage.cards.CardSetInfo;
 import mage.constants.CardType;
 import mage.constants.Duration;
+import mage.constants.SuperType;
 import mage.constants.Zone;
 import mage.filter.common.FilterCreaturePermanent;
 import mage.filter.predicate.Predicates;
@@ -61,7 +62,7 @@ public class VerdelothTheAncient extends CardImpl {
 
     public VerdelothTheAncient(UUID ownerId, CardSetInfo setInfo) {
         super(ownerId,setInfo,new CardType[]{CardType.CREATURE},"{4}{G}{G}");
-        this.supertype.add("Legendary");
+        addSuperType(SuperType.LEGENDARY);
         this.subtype.add("Treefolk");
 
         this.power = new MageInt(4);
@@ -82,7 +83,7 @@ public class VerdelothTheAncient extends CardImpl {
         
         // When Verdeloth the Ancient enters the battlefield, if it was kicked, create X 1/1 green Saproling creature tokens.
         EntersBattlefieldTriggeredAbility ability = new EntersBattlefieldTriggeredAbility(new CreateTokenEffect(new SaprolingToken(), new GetKickerXValue()), false);
-        this.addAbility(new ConditionalTriggeredAbility(ability, KickedCondition.getInstance(), 
+        this.addAbility(new ConditionalTriggeredAbility(ability, KickedCondition.instance,
                 "When {this} enters the battlefield, if it was kicked, create X 1/1 green Saproling creature tokens."));
         
     }

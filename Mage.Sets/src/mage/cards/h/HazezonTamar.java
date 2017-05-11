@@ -43,11 +43,12 @@ import mage.cards.CardImpl;
 import mage.cards.CardSetInfo;
 import mage.constants.CardType;
 import mage.constants.Outcome;
+import mage.constants.SuperType;
 import mage.filter.common.FilterControlledLandPermanent;
 import mage.filter.common.FilterCreaturePermanent;
 import mage.filter.predicate.mageobject.SubtypePredicate;
 import mage.game.Game;
-import mage.game.permanent.token.Token;
+import mage.game.permanent.token.HazezonTamarSandWarriorToken;
 import mage.players.Player;
 
 /**
@@ -64,8 +65,8 @@ public class HazezonTamar extends CardImpl {
     }
 
     public HazezonTamar(UUID ownerId, CardSetInfo setInfo) {
-        super(ownerId,setInfo,new CardType[]{CardType.CREATURE},"{4}{R}{G}{W}");
-        this.supertype.add("Legendary");
+        super(ownerId, setInfo, new CardType[]{CardType.CREATURE}, "{4}{R}{G}{W}");
+        addSuperType(SuperType.LEGENDARY);
         this.subtype.add("Human");
         this.subtype.add("Warrior");
 
@@ -108,7 +109,7 @@ class HazezonTamarEntersEffect extends OneShotEffect {
     public boolean apply(Game game, Ability source) {
         Player controller = game.getPlayer(source.getControllerId());
         if (controller != null) {
-            Effect effect = new CreateTokenEffect(new HazezonTamarSandWarrior(), new PermanentsOnBattlefieldCount(new FilterControlledLandPermanent()));
+            Effect effect = new CreateTokenEffect(new HazezonTamarSandWarriorToken(), new PermanentsOnBattlefieldCount(new FilterControlledLandPermanent()));
             effect.setText("create X 1/1 Sand Warrior creature tokens that are red, green, and white, where X is the number of lands you control at that time");
             DelayedTriggeredAbility delayedAbility = new AtTheBeginOfYourNextUpkeepDelayedTriggeredAbility(effect);
             game.addDelayedTriggeredAbility(delayedAbility, source);
@@ -116,20 +117,4 @@ class HazezonTamarEntersEffect extends OneShotEffect {
         }
         return false;
     }
-}
-
-class HazezonTamarSandWarrior extends Token {
-
-    public HazezonTamarSandWarrior() {
-        super("Sand Warrior", "1/1 Sand Warrior creature tokens that are red, green, and white");
-        cardType.add(CardType.CREATURE);
-        color.setRed(true);
-        color.setGreen(true);
-        color.setWhite(true);
-        subtype.add("Sand");
-        subtype.add("Warrior");
-        power = new MageInt(1);
-        toughness = new MageInt(1);
-    }
-
 }

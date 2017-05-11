@@ -1,21 +1,20 @@
 package mage.client;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 import mage.cards.decks.DeckCardLists;
 import mage.client.chat.LocalCommands;
 import mage.constants.ManaType;
 import mage.constants.PlayerAction;
 import mage.game.match.MatchOptions;
 import mage.game.tournament.TournamentOptions;
+import mage.players.PlayerType;
 import mage.players.net.UserData;
 import mage.remote.Connection;
 import mage.remote.MageRemoteException;
 import mage.remote.Session;
 import mage.remote.SessionImpl;
 import mage.view.*;
+
+import java.util.*;
 
 /**
  * Created by IGOUDT on 15-9-2016.
@@ -93,11 +92,11 @@ public final class SessionHandler {
         session.sendPlayerBoolean(gameId, b);
     }
 
-    public static String[] getPlayerTypes() {
+    public static PlayerType[] getPlayerTypes() {
         return session.getPlayerTypes();
     }
 
-    public static boolean joinTournamentTable(UUID roomId, UUID tableId, String text, String selectedItem, Integer integer, DeckCardLists deckCardLists, String s) {
+    public static boolean joinTournamentTable(UUID roomId, UUID tableId, String text, PlayerType selectedItem, Integer integer, DeckCardLists deckCardLists, String s) {
         return session.joinTournamentTable(roomId, tableId, text, selectedItem, integer, deckCardLists, s);
     }
 
@@ -129,7 +128,7 @@ public final class SessionHandler {
         return session.isTableOwner(roomId, tableId);
     }
 
-    public static UUID getTableChatId(UUID tableId) {
+    public static Optional<UUID> getTableChatId(UUID tableId) {
         return session.getTableChatId(tableId);
     }
 
@@ -141,7 +140,7 @@ public final class SessionHandler {
         return session.startMatch(roomId, tableId);
     }
 
-    public static UUID getGameChatId(UUID gameId) {
+    public static Optional<UUID> getGameChatId(UUID gameId) {
         return session.getGameChatId(gameId);
     }
 
@@ -161,7 +160,7 @@ public final class SessionHandler {
         return session.joinTournament(tournamentId);
     }
 
-    public static UUID getTournamentChatId(UUID tournamentId) {
+    public static Optional<UUID> getTournamentChatId(UUID tournamentId) {
         return session.getTournamentChatId(tournamentId);
     }
 
@@ -235,7 +234,7 @@ public final class SessionHandler {
         return session.createTable(roomId, options);
     }
 
-    public static boolean joinTable(UUID roomId, UUID tableId, String playerName, String human, int skill, DeckCardLists deckCardLists, String text) {
+    public static boolean joinTable(UUID roomId, UUID tableId, String playerName, PlayerType human, int skill, DeckCardLists deckCardLists, String text) {
         return session.joinTable(roomId, tableId, playerName, human, skill, deckCardLists, text);
     }
 
@@ -255,7 +254,7 @@ public final class SessionHandler {
         session.sendCardMark(draftId, id);
     }
 
-    public static UUID getRoomChatId(UUID roomId) {
+    public static Optional<UUID> getRoomChatId(UUID roomId) {
         return session.getRoomChatId(roomId);
     }
 
@@ -264,7 +263,7 @@ public final class SessionHandler {
             return session.getRoomUsers(roomId);
         } catch (MageRemoteException e) {
             e.printStackTrace();
-            return null;
+            return Collections.emptyList();
         }
     }
 
@@ -273,7 +272,7 @@ public final class SessionHandler {
             return session.getFinishedMatches(roomId);
         } catch (MageRemoteException e) {
             e.printStackTrace();
-            return null;
+            return new ArrayList<>();
         }
     }
 
@@ -290,7 +289,7 @@ public final class SessionHandler {
             return session.getTables(roomId);
         } catch (MageRemoteException e) {
             e.printStackTrace();
-            return null;
+            return new ArrayList<>();
         }
     }
 
@@ -318,7 +317,7 @@ public final class SessionHandler {
         return session.sendPlayerManaType(gameId, playerId, data);
     }
 
-    public static TableView getTable(UUID roomId, UUID tableId) {
+    public static Optional<TableView> getTable(UUID roomId, UUID tableId) {
         return session.getTable(roomId, tableId);
     }
 

@@ -1,12 +1,12 @@
 package mage.client.game;
 
+import java.util.concurrent.TimeUnit;
+import javax.swing.*;
 import mage.client.MageFrame;
 import mage.client.components.MageComponents;
 import mage.client.components.MageUI;
 import org.apache.log4j.Logger;
 import org.junit.Ignore;
-
-import javax.swing.*;
 
 /**
  * @author ayratn
@@ -48,7 +48,7 @@ public class StartMultiGamesTest {
             synchronized (sync) {
                 frame = new MageFrame();
                 frame.setVisible(true);
-                sync.notify();
+                sync.notifyAll();
             }
         });
         synchronized (sync) {
@@ -68,7 +68,7 @@ public class StartMultiGamesTest {
 
     private void sleep(int ms) {
         try {
-            Thread.sleep(ms);
+            TimeUnit.MILLISECONDS.sleep(ms);
         } catch (Exception e) {
             e.printStackTrace();
         }

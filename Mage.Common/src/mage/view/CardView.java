@@ -27,22 +27,18 @@
  */
 package mage.view;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 import mage.MageObject;
 import mage.ObjectColor;
+import mage.abilities.Abilities;
+import mage.abilities.Ability;
 import mage.abilities.Mode;
 import mage.abilities.SpellAbility;
 import mage.abilities.costs.mana.ManaCosts;
-import mage.cards.Card;
-import mage.cards.FrameStyle;
-import mage.cards.SplitCard;
-import mage.constants.AbilityType;
-import mage.constants.CardType;
-import mage.constants.MageObjectType;
-import mage.constants.Rarity;
-import mage.constants.Zone;
+import mage.abilities.keyword.AftermathAbility;
+import mage.cards.*;
+import mage.constants.*;
 import mage.counters.Counter;
 import mage.counters.CounterType;
 import mage.designations.Designation;
@@ -69,11 +65,11 @@ public class CardView extends SimpleCardView {
     protected List<String> rules;
     protected String power;
     protected String toughness;
-    protected String loyalty;
+    protected String loyalty = "";
     protected String startingLoyalty;
-    protected List<CardType> cardTypes;
+    protected EnumSet<CardType> cardTypes;
     protected List<String> subTypes;
-    protected List<String> superTypes;
+    protected EnumSet<SuperType> superTypes;
     protected ObjectColor color;
     protected ObjectColor frameColor;
     protected FrameStyle frameStyle;
@@ -104,9 +100,13 @@ public class CardView extends SimpleCardView {
     protected String leftSplitName;
     protected ManaCosts leftSplitCosts;
     protected List<String> leftSplitRules;
+    protected String leftSplitTypeLine;
     protected String rightSplitName;
     protected ManaCosts rightSplitCosts;
     protected List<String> rightSplitRules;
+    protected String rightSplitTypeLine;
+
+    protected ArtRect artRect = ArtRect.NORMAL;
 
     protected List<UUID> targets;
 
@@ -125,6 +125,7 @@ public class CardView extends SimpleCardView {
     protected boolean isChoosable;
     protected boolean selected;
     protected boolean canAttack;
+    protected boolean inViewerOnly;
 
     public CardView(Card card) {
         this(card, null, false);
@@ -184,14 +185,17 @@ public class CardView extends SimpleCardView {
 
         this.alternateName = cardView.alternateName;
         this.originalName = cardView.originalName;
+        this.artRect = cardView.artRect;
 
         this.isSplitCard = cardView.isSplitCard;
         this.leftSplitName = cardView.leftSplitName;
         this.leftSplitCosts = cardView.leftSplitCosts;
         this.leftSplitRules = null;
+        this.leftSplitTypeLine = cardView.leftSplitTypeLine;
         this.rightSplitName = cardView.rightSplitName;
         this.rightSplitCosts = cardView.rightSplitCosts;
         this.rightSplitRules = null;
+        this.rightSplitTypeLine = cardView.rightSplitTypeLine;
 
         this.targets = null;
 
@@ -210,10 +214,10 @@ public class CardView extends SimpleCardView {
         this.isChoosable = cardView.isChoosable;
         this.selected = cardView.selected;
         this.canAttack = cardView.canAttack;
+        this.inViewerOnly = cardView.inViewerOnly;
     }
 
     /**
-     *
      * @param card
      * @param game
      * @param controlled is the card view created for the card controller - used
@@ -224,8 +228,24 @@ public class CardView extends SimpleCardView {
         this(card, game, controlled, false, false);
     }
 
+    private static String getCardTypeLine(Game game, Card card) {
+        StringBuilder sbType = new StringBuilder();
+        for (SuperType superType : card.getSuperType()) {
+            sbType.append(superType).append(' ');
+        }
+        for (CardType cardType : card.getCardType()) {
+            sbType.append(cardType.toString()).append(' ');
+        }
+        if (!card.getSubtype(game).isEmpty()) {
+            sbType.append("- ");
+            for (String subType : card.getSubtype(game)) {
+                sbType.append(subType).append(' ');
+            }
+        }
+        return sbType.toString();
+    }
+
     /**
-     *
      * @param card
      * @param game
      * @param controlled is the card view created for the card controller - used
@@ -285,12 +305,16 @@ public class CardView extends SimpleCardView {
         SplitCard splitCard = null;
         if (card.isSplitCard()) {
             splitCard = (SplitCard) card;
-            rotate = true;
+            rotate = (((SplitCard) card).getSpellAbility().getSpellAbilityType()) != SpellAbilityType.SPLIT_AFTERMATH;
         } else if (card instanceof Spell) {
             switch (((Spell) card).getSpellAbility().getSpellAbilityType()) {
                 case SPLIT_FUSED:
                     splitCard = (SplitCard) ((Spell) card).getCard();
                     rotate = true;
+                    break;
+                case SPLIT_AFTERMATH:
+                    splitCard = (SplitCard) ((Spell) card).getCard();
+                    rotate = false;
                     break;
                 case SPLIT_LEFT:
                 case SPLIT_RIGHT:
@@ -303,9 +327,11 @@ public class CardView extends SimpleCardView {
             leftSplitName = splitCard.getLeftHalfCard().getName();
             leftSplitCosts = splitCard.getLeftHalfCard().getManaCost();
             leftSplitRules = splitCard.getLeftHalfCard().getRules(game);
+            leftSplitTypeLine = getCardTypeLine(game, splitCard.getLeftHalfCard());
             rightSplitName = splitCard.getRightHalfCard().getName();
             rightSplitCosts = splitCard.getRightHalfCard().getManaCost();
             rightSplitRules = splitCard.getRightHalfCard().getRules(game);
+            rightSplitTypeLine = getCardTypeLine(game, splitCard.getRightHalfCard());
         }
 
         this.name = card.getImageName();
@@ -321,12 +347,12 @@ public class CardView extends SimpleCardView {
         if (card instanceof Permanent) {
             this.mageObjectType = MageObjectType.PERMANENT;
             Permanent permanent = (Permanent) card;
-            this.loyalty = Integer.toString(permanent.getCounters(game).getCount(CounterType.LOYALTY));
-            this.pairedCard = permanent.getPairedCard() != null ? permanent.getPairedCard().getSourceId() : null;
-            if (!permanent.getControllerId().equals(permanent.getOwnerId())) {
-                controlledByOwner = false;
-            }
             if (game != null && permanent.getCounters(game) != null && !permanent.getCounters(game).isEmpty()) {
+                this.loyalty = Integer.toString(permanent.getCounters(game).getCount(CounterType.LOYALTY));
+                this.pairedCard = permanent.getPairedCard() != null ? permanent.getPairedCard().getSourceId() : null;
+                if (!permanent.getControllerId().equals(permanent.getOwnerId())) {
+                    controlledByOwner = false;
+                }
                 counters = new ArrayList<>();
                 for (Counter counter : permanent.getCounters(game).values()) {
                     counters.add(new CounterView(counter));
@@ -350,7 +376,7 @@ public class CardView extends SimpleCardView {
         this.toughness = Integer.toString(card.getToughness().getValue());
         this.cardTypes = card.getCardType();
         this.subTypes = card.getSubtype(game);
-        this.superTypes = card.getSupertype();
+        this.superTypes = card.getSuperType();
         this.color = card.getColor(game);
         this.transformable = card.isTransformable();
         this.flipCard = card.isFlipCard();
@@ -402,6 +428,31 @@ public class CardView extends SimpleCardView {
                     }
                 }
             }
+
+            // Determine what part of the art to slice out for spells on the stack which originate
+            // from a split, fuse, or aftermath split card.
+            SpellAbilityType ty = spell.getSpellAbility().getSpellAbilityType();
+            if (ty == SpellAbilityType.SPLIT_RIGHT || ty == SpellAbilityType.SPLIT_LEFT || ty == SpellAbilityType.SPLIT_FUSED) {
+                // Needs a special art rect
+                if (ty == SpellAbilityType.SPLIT_FUSED) {
+                    artRect = ArtRect.SPLIT_FUSED;
+                } else if (spell.getCard() != null) {
+                    SplitCard wholeCard = ((SplitCardHalf) spell.getCard()).getParentCard();
+                    Abilities<Ability> aftermathHalfAbilities = wholeCard.getRightHalfCard().getAbilities();
+                    if (aftermathHalfAbilities.stream().anyMatch(ability -> ability instanceof AftermathAbility)) {
+                        if (ty == SpellAbilityType.SPLIT_RIGHT) {
+                            artRect = ArtRect.AFTERMATH_BOTTOM;
+                        } else {
+                            artRect = ArtRect.AFTERMATH_TOP;
+                        }
+                    } else if (ty == SpellAbilityType.SPLIT_RIGHT) {
+                        artRect = ArtRect.SPLIT_RIGHT;
+                    } else {
+                        artRect = ArtRect.SPLIT_LEFT;
+                    }
+                }
+            }
+
             // show for modal spell, which mode was choosen
             if (spell.getSpellAbility().isModal()) {
                 for (UUID modeId : spell.getSpellAbility().getModes().getSelectedModes()) {
@@ -437,7 +488,7 @@ public class CardView extends SimpleCardView {
         }
         this.cardTypes = object.getCardType();
         this.subTypes = object.getSubtype(null);
-        this.superTypes = object.getSupertype();
+        this.superTypes = object.getSuperType();
         this.color = object.getColor(null);
         this.manaCost = object.getManaCost().getSymbols();
         this.convertedManaCost = object.getManaCost().convertedManaCost();
@@ -519,9 +570,9 @@ public class CardView extends SimpleCardView {
         this.toughness = "";
         this.loyalty = "";
         this.startingLoyalty = "";
-        this.cardTypes = new ArrayList<>();
+        this.cardTypes = EnumSet.noneOf(CardType.class);
         this.subTypes = new ArrayList<>();
-        this.superTypes = new ArrayList<>();
+        this.superTypes = EnumSet.noneOf(SuperType.class);
         this.color = new ObjectColor();
         this.frameColor = new ObjectColor();
         this.frameStyle = FrameStyle.M15_NORMAL;
@@ -568,7 +619,7 @@ public class CardView extends SimpleCardView {
         this.startingLoyalty = "";
         this.cardTypes = token.getCardType();
         this.subTypes = token.getSubtype(null);
-        this.superTypes = token.getSupertype();
+        this.superTypes = token.getSuperType();
         this.color = token.getColor(null);
         this.frameColor = token.getFrameColor(null);
         this.frameStyle = token.getFrameStyle();
@@ -640,7 +691,7 @@ public class CardView extends SimpleCardView {
         return startingLoyalty;
     }
 
-    public List<CardType> getCardTypes() {
+    public Set<CardType> getCardTypes() {
         return cardTypes;
     }
 
@@ -648,7 +699,7 @@ public class CardView extends SimpleCardView {
         return subTypes;
     }
 
-    public List<String> getSuperTypes() {
+    public EnumSet<SuperType> getSuperTypes() {
         return superTypes;
     }
 
@@ -786,6 +837,10 @@ public class CardView extends SimpleCardView {
         return leftSplitRules;
     }
 
+    public String getLeftSplitTypeLine() {
+        return leftSplitTypeLine;
+    }
+
     public String getRightSplitName() {
         return rightSplitName;
     }
@@ -796,6 +851,14 @@ public class CardView extends SimpleCardView {
 
     public List<String> getRightSplitRules() {
         return rightSplitRules;
+    }
+
+    public String getRightSplitTypeLine() {
+        return rightSplitTypeLine;
+    }
+
+    public ArtRect getArtRect() {
+        return artRect;
     }
 
     public CardView getSecondCardFace() {
@@ -894,4 +957,66 @@ public class CardView extends SimpleCardView {
         this.canAttack = canAttack;
     }
 
+    public boolean isCreature() {
+        return cardTypes.contains(CardType.CREATURE);
+    }
+
+    public boolean isPlanesWalker() {
+        return cardTypes.contains(CardType.PLANESWALKER);
+    }
+
+    public String getColorText() {
+
+        String color = getColor().getDescription();
+        return color.substring(0, 1).toUpperCase() + color.substring(1);
+    }
+
+    public String getTypeText() {
+        StringBuilder type = new StringBuilder();
+        if (!getSuperTypes().isEmpty()) {
+            type.append(String.join(" ", getSuperTypes().stream().map(SuperType::toString).collect(Collectors.toList())));
+            type.append(" ");
+        }
+        if (!getCardTypes().isEmpty()) {
+            type.append(String.join(" ", getCardTypes().stream().map(CardType::toString).collect(Collectors.toList())));
+            type.append(" ");
+        }
+        if (!getSubTypes().isEmpty()) {
+            type.append(" - ");
+            type.append(String.join(" ", getSubTypes()));
+        }
+        return type.toString();
+    }
+
+    public boolean isLand() {
+        return cardTypes.contains(CardType.LAND);
+    }
+
+    public boolean isInstant() {
+        return cardTypes.contains(CardType.INSTANT);
+    }
+
+    public boolean isSorcery() {
+        return cardTypes.contains(CardType.SORCERY);
+    }
+
+    public boolean isEnchantment() {
+        return cardTypes.contains(CardType.ENCHANTMENT);
+    }
+
+    public boolean isArtifact() {
+        return cardTypes.contains(CardType.ARTIFACT);
+    }
+
+    public boolean isTribal() {
+        return cardTypes.contains(CardType.TRIBAL);
+    }
+    
+    public void setInViewerOnly(boolean inViewerOnly) {
+        this.inViewerOnly = inViewerOnly;
+    }
+    
+    public boolean inViewerOnly() {
+        return inViewerOnly;
+    }
 }

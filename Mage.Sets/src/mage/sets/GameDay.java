@@ -28,9 +28,9 @@
 
 package mage.sets;
 
-import mage.constants.SetType;
 import mage.cards.ExpansionSet;
 import mage.constants.Rarity;
+import mage.constants.SetType;
 
 /**
  *
@@ -38,10 +38,10 @@ import mage.constants.Rarity;
  */
 public class GameDay extends ExpansionSet {
 
-    private static final GameDay fINSTANCE = new GameDay();
+    private static final GameDay instance = new GameDay();
 
     public static GameDay getInstance() {
-        return fINSTANCE;
+        return instance;
     }
 
     private GameDay() {
@@ -61,6 +61,7 @@ public class GameDay extends ExpansionSet {
         cards.add(new SetCardInfo("Elite Inquisitor", 13, Rarity.RARE, mage.cards.e.EliteInquisitor.class));
         cards.add(new SetCardInfo("Essence Extraction", 55, Rarity.UNCOMMON, mage.cards.e.EssenceExtraction.class));
         cards.add(new SetCardInfo("Firemane Avenger", 24, Rarity.RARE, mage.cards.f.FiremaneAvenger.class));
+        cards.add(new SetCardInfo("Glorybringer", 59, Rarity.RARE, mage.cards.g.Glorybringer.class));
         cards.add(new SetCardInfo("Goblin Diplomats", 29, Rarity.RARE, mage.cards.g.GoblinDiplomats.class));
         cards.add(new SetCardInfo("Hall of Triumph", 36, Rarity.RARE, mage.cards.h.HallOfTriumph.class));
         cards.add(new SetCardInfo("Heir of the Wilds", 37, Rarity.UNCOMMON, mage.cards.h.HeirOfTheWilds.class));

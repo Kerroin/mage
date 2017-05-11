@@ -27,6 +27,7 @@
  */
 package mage.cards.k;
 
+import java.util.UUID;
 import mage.MageInt;
 import mage.abilities.Ability;
 import mage.abilities.common.SimpleActivatedAbility;
@@ -38,13 +39,12 @@ import mage.cards.CardImpl;
 import mage.cards.CardSetInfo;
 import mage.constants.CardType;
 import mage.constants.Outcome;
+import mage.constants.SuperType;
 import mage.constants.Zone;
 import mage.game.Game;
 import mage.game.permanent.Permanent;
-import mage.game.permanent.token.Token;
+import mage.game.permanent.token.KalitasVampireToken;
 import mage.target.common.TargetCreaturePermanent;
-
-import java.util.UUID;
 
 /**
  *
@@ -53,8 +53,8 @@ import java.util.UUID;
 public class KalitasBloodchiefOfGhet extends CardImpl {
 
     public KalitasBloodchiefOfGhet(UUID ownerId, CardSetInfo setInfo) {
-        super(ownerId,setInfo,new CardType[]{CardType.CREATURE},"{5}{B}{B}");
-        this.supertype.add("Legendary");
+        super(ownerId, setInfo, new CardType[]{CardType.CREATURE}, "{5}{B}{B}");
+        addSuperType(SuperType.LEGENDARY);
         this.subtype.add("Vampire");
         this.subtype.add("Warrior");
 
@@ -97,19 +97,9 @@ class KalitasDestroyEffect extends OneShotEffect {
     public boolean apply(Game game, Ability source) {
         Permanent permanent = game.getPermanent(getTargetPointer().getFirst(game, source));
         if (permanent != null && permanent.destroy(source.getSourceId(), game, false)) { // if not destroyed or moved to other zone (replacement effect) it returns false
-            new CreateTokenEffect(new VampireToken(permanent.getPower().getValue(), permanent.getToughness().getValue())).apply(game, source);
+            new CreateTokenEffect(new KalitasVampireToken(permanent.getPower().getValue(), permanent.getToughness().getValue())).apply(game, source);
         }
         return true;
     }
 
-    static class VampireToken extends Token {
-        public VampireToken(int tokenPower, int tokenToughness) {
-            super("Vampire", new StringBuilder(tokenPower).append('/').append(tokenToughness).append(" black Vampire creature token").toString());
-            cardType.add(CardType.CREATURE);
-            color.setBlack(true);
-            subtype.add("Vampire");
-            power = new MageInt(tokenPower);
-            toughness = new MageInt(tokenToughness);
-        }
-    }
 }

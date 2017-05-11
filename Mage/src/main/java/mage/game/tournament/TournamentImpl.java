@@ -38,6 +38,7 @@ import mage.game.match.Match;
 import mage.game.match.MatchPlayer;
 import mage.game.result.ResultProtos.*;
 import mage.players.Player;
+import mage.players.PlayerType;
 import mage.util.RandomUtil;
 import org.apache.log4j.Logger;
 
@@ -82,7 +83,7 @@ public abstract class TournamentImpl implements Tournament {
     }
 
     @Override
-    public void addPlayer(Player player, String playerType) {
+    public void addPlayer(Player player, PlayerType playerType) {
         players.put(player.getId(), new TournamentPlayer(player, playerType));
     }
 
@@ -283,14 +284,14 @@ public abstract class TournamentImpl implements Tournament {
                     // set player state if he finished the round
                     if (round.getRoundNumber() == rounds.size()) { // for elimination getRoundNumber = 0 so never true here
                         match.setTournamentRound(round.getRoundNumber());
-                        if (tp1.getState().equals(TournamentPlayerState.DUELING)) {
+                        if (tp1.getState() == TournamentPlayerState.DUELING) {
                             if (round.getRoundNumber() == getNumberRounds()) {
                                 tp1.setState(TournamentPlayerState.FINISHED);
                             } else {
                                 tp1.setState(TournamentPlayerState.WAITING);
                             }
                         }
-                        if (tp2.getState().equals(TournamentPlayerState.DUELING)) {
+                        if (tp2.getState() == TournamentPlayerState.DUELING) {
                             if (round.getRoundNumber() == getNumberRounds()) {
                                 tp2.setState(TournamentPlayerState.FINISHED);
                             } else {

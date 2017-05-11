@@ -99,14 +99,14 @@ class LifeAndLimbEffect extends ContinuousEffectImpl {
             for (Permanent permanent : game.getState().getBattlefield().getActivePermanents(filter, source.getControllerId(), source.getSourceId(), game)) {
                 switch (layer) {
                     case TypeChangingEffects_4:
-                        if (!permanent.getCardType().contains(CardType.CREATURE)) {
-                            permanent.getCardType().add(CardType.CREATURE);
+                        if (!permanent.isCreature()) {
+                            permanent.addCardType(CardType.CREATURE);
                         }
                         if (!permanent.getSubtype(game).contains("Saproling")) {
                             permanent.getSubtype(game).add("Saproling");
                         }
-                        if (!permanent.getCardType().contains(CardType.LAND)) {
-                            permanent.getCardType().add(CardType.LAND);
+                        if (!permanent.isLand()) {
+                            permanent.addCardType(CardType.LAND);
                         }
                         if (!permanent.getSubtype(game).contains("Forest")) {
                             permanent.getSubtype(game).add("Forest");
@@ -128,7 +128,7 @@ class LifeAndLimbEffect extends ContinuousEffectImpl {
                         }
                         break;
                     case PTChangingEffects_7:
-                        if (sublayer.equals(SubLayer.SetPT_7b)) {
+                        if (sublayer == SubLayer.SetPT_7b) {
                             permanent.getPower().setValue(1);
                             permanent.getToughness().setValue(1);
                         }

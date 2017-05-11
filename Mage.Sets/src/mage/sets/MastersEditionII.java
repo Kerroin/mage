@@ -40,8 +40,8 @@ import mage.cards.l.LimDulsHighGuard;
 import mage.cards.n.Necrite;
 import mage.cards.n.NightSoil;
 import mage.cards.o.OrcishVeteran;
-import mage.constants.SetType;
 import mage.constants.Rarity;
+import mage.constants.SetType;
 
 /**
  *
@@ -49,10 +49,10 @@ import mage.constants.Rarity;
  */
 public class MastersEditionII extends ExpansionSet {
 
-    private static final MastersEditionII fINSTANCE = new MastersEditionII();
+    private static final MastersEditionII instance = new MastersEditionII();
 
     public static MastersEditionII getInstance() {
-        return fINSTANCE;
+        return instance;
     }
 
     private MastersEditionII() {

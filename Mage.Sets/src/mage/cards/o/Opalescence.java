@@ -108,8 +108,8 @@ class OpalescenceEffect extends ContinuousEffectImpl {
             switch (layer) {
                 case TypeChangingEffects_4:
                     if (sublayer == SubLayer.NA) {
-                        if (!permanent.getCardType().contains(CardType.CREATURE)) {
-                            permanent.getCardType().add(CardType.CREATURE);
+                        if (!permanent.isCreature()) {
+                            permanent.addCardType(CardType.CREATURE);
                         }
                     }
                     break;
@@ -138,13 +138,10 @@ class OpalescenceEffect extends ContinuousEffectImpl {
 
     @Override
     public Set<UUID> isDependentTo(List<ContinuousEffect> allEffectsInLayer) {
-        Set<UUID> dependentTo = null;
+        Set<UUID> dependentTo = new HashSet<>();
         for (ContinuousEffect effect : allEffectsInLayer) {
             for (DependencyType dependencyType : effect.getDependencyTypes()) {
                 if (checkDependencyTypes.contains(dependencyType)) {
-                    if (dependentTo == null) {
-                        dependentTo = new HashSet<>();
-                    }
                     dependentTo.add(effect.getId());
                 }
             }

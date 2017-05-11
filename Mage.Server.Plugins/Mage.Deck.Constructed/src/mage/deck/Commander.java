@@ -27,11 +27,7 @@
  */
 package mage.deck;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import mage.ObjectColor;
 import mage.abilities.Ability;
 import mage.abilities.common.CanBeYourCommanderAbility;
@@ -42,10 +38,8 @@ import mage.cards.ExpansionSet;
 import mage.cards.Sets;
 import mage.cards.decks.Constructed;
 import mage.cards.decks.Deck;
-import mage.constants.CardType;
 import mage.constants.SetType;
 import mage.filter.FilterMana;
-import mage.util.CardUtil;
 
 /**
  *
@@ -75,6 +69,7 @@ public class Commander extends Constructed {
         banned.add("Gifts Ungiven");
         banned.add("Griselbrand");
         banned.add("Karakas");
+        banned.add("Leovold, Emissary of Trest");
         banned.add("Library of Alexandria");
         banned.add("Limited Resources");
         banned.add("Mox Emerald");
@@ -86,7 +81,6 @@ public class Commander extends Constructed {
         banned.add("Panoptic Mirror");
         banned.add("Primeval Titan");
         banned.add("Prophet of Kruphix");
-        banned.add("Protean Hulk");
         banned.add("Recurring Nightmare");
         banned.add("Rofellos, Llanowar Emissary");
         banned.add("Sundering Titan");
@@ -146,8 +140,8 @@ public class Commander extends Constructed {
                     invalid.put("Commander", "Commander banned (" + commander.getName() + ')');
                     valid = false;
                 }
-                if ((!commander.getCardType().contains(CardType.CREATURE) || !commander.getSupertype().contains("Legendary"))
-                        && (!commander.getCardType().contains(CardType.PLANESWALKER) || !commander.getAbilities().contains(CanBeYourCommanderAbility.getInstance()))) {
+                if ((!commander.isCreature() || !commander.isLegendary())
+                        && (!commander.isPlaneswalker() || !commander.getAbilities().contains(CanBeYourCommanderAbility.getInstance()))) {
                     invalid.put("Commander", "Commander invalid (" + commander.getName() + ')');
                     valid = false;
                 }
@@ -155,7 +149,7 @@ public class Commander extends Constructed {
                     invalid.put("Commander", "Commander without Partner (" + commander.getName() + ')');
                     valid = false;
                 }
-                FilterMana commanderColor = CardUtil.getColorIdentity(commander);
+                FilterMana commanderColor = commander.getColorIdentity();
                 if (commanderColor.isWhite()) {
                     colorIdentity.setWhite(true);
                 }
@@ -199,7 +193,7 @@ public class Commander extends Constructed {
     }
 
     public boolean cardHasValidColor(FilterMana commander, Card card) {
-        FilterMana cardColor = CardUtil.getColorIdentity(card);
+        FilterMana cardColor = card.getColorIdentity();
         return !(cardColor.isBlack() && !commander.isBlack()
                 || cardColor.isBlue() && !commander.isBlue()
                 || cardColor.isGreen() && !commander.isGreen()
@@ -242,6 +236,8 @@ public class Commander extends Constructed {
             boolean drawCards = false;
             boolean evoke = false;
             boolean extraTurns = false;
+            boolean flash = false;
+            boolean flashback = false;
             boolean flicker = false;
             boolean gainControl = false;
             boolean hexproof = false;
@@ -299,6 +295,8 @@ public class Commander extends Constructed {
                 exileAll |= s.contains("exile") && s.contains(" all ");
                 extraTurns |= s.contains("extra turn");
                 flicker |= s.contains("exile") && s.contains("return") && s.contains("to the battlefield under");
+                flash |= s.contains("flash");
+                flashback |= s.contains("flashback");
                 gainControl |= s.contains("gain control");
                 hexproof |= s.contains("hexproof");
                 infect |= s.contains("infect");
@@ -309,7 +307,7 @@ public class Commander extends Constructed {
                 overload |= s.contains("overload");
                 persist |= s.contains("persist");
                 preventDamage |= s.contains("prevent") && s.contains("all") && s.contains("damage");
-                proliferate |= s.contains("proliferate");                
+                proliferate |= s.contains("proliferate");
                 protection |= s.contains("protection");
                 putUnderYourControl |= s.contains("put") && s.contains("under your control");
                 retrace |= s.contains("retrace");
@@ -378,6 +376,12 @@ public class Commander extends Constructed {
                 thisMaxPower = Math.max(thisMaxPower, 4);
             }
             if (exileAll) {
+                thisMaxPower = Math.max(thisMaxPower, 4);
+            }
+            if (flash) {
+                thisMaxPower = Math.max(thisMaxPower, 4);
+            }
+            if (flashback) {
                 thisMaxPower = Math.max(thisMaxPower, 4);
             }
             if (flicker) {
@@ -501,7 +505,7 @@ public class Commander extends Constructed {
                 thisMaxPower = Math.max(thisMaxPower, 1);
             }
 
-            if (card.getCardType().contains(CardType.PLANESWALKER)) {
+            if (card.isPlaneswalker()) {
                 if (card.getName().toLowerCase().equals("jace, the mind sculptor")) {
                     thisMaxPower = Math.max(thisMaxPower, 6);
                 }
@@ -509,10 +513,6 @@ public class Commander extends Constructed {
                     thisMaxPower = Math.max(thisMaxPower, 5);
                 }
                 thisMaxPower = Math.max(thisMaxPower, 4);
-            }
-
-            if (card.getCardType().contains(CardType.LAND)) {
-                thisMaxPower = 0;
             }
 
             String cn = card.getName().toLowerCase();
@@ -600,9 +600,12 @@ public class Commander extends Constructed {
             if (cn.equals("animate artifact") || cn.equals("animar, soul of element")
                     || cn.equals("archaeomancer")
                     || cn.equals("ashnod's altar") || cn.equals("azami, lady of scrolls")
+                    || cn.equals("aura flux")
                     || cn.equals("basalt monolith") || cn.equals("brago, king eternal")
                     || cn.equals("candelabra of tawnos") || cn.equals("cephalid aristocrat")
                     || cn.equals("cephalid illusionist") || cn.equals("changeling berserker")
+                    || cn.equals("consecrated sphinx")
+                    || cn.equals("cyclonic rift")
                     || cn.equals("the chain veil")
                     || cn.equals("cinderhaze wretch") || cn.equals("cryptic gateway")
                     || cn.equals("deadeye navigator") || cn.equals("derevi, empyrial tactician")
@@ -610,10 +613,14 @@ public class Commander extends Constructed {
                     || cn.equals("earthcraft") || cn.equals("erratic portal")
                     || cn.equals("enter the infinite") || cn.equals("omniscience")
                     || cn.equals("exquisite blood") || cn.equals("future sight")
+                    || cn.equals("genesis chamber")
                     || cn.equals("ghave, guru of spores")
+                    || cn.equals("grave pact")
                     || cn.equals("grave titan") || cn.equals("great whale")
                     || cn.equals("grim monolith") || cn.equals("gush")
                     || cn.equals("hellkite charger") || cn.equals("intruder alarm")
+                    || cn.equals("hermit druid")
+                    || cn.equals("humility")
                     || cn.equals("iona, shield of emeria")
                     || cn.equals("karn, silver golem") || cn.equals("kiki-jiki, mirror breaker")
                     || cn.equals("krark-clan ironworks") || cn.equals("krenko, mob boss")
@@ -626,14 +633,18 @@ public class Commander extends Constructed {
                     || cn.equals("minion reflector") || cn.equals("mycosynth lattice")
                     || cn.equals("myr turbine") || cn.equals("narset, enlightened master")
                     || cn.equals("nekusar, the mindrazer") || cn.equals("norin the wary")
+                    || cn.equals("notion thief")
                     || cn.equals("opalescence") || cn.equals("ornithopter")
                     || cn.equals("paradox engine")
+                    || cn.equals("purphoros, god of the forge")
                     || cn.equals("peregrine drake") || cn.equals("palinchron")
                     || cn.equals("planar portal") || cn.equals("power artifact")
                     || cn.equals("rings of brighthearth") || cn.equals("rite of replication")
                     || cn.equals("sanguine bond") || cn.equals("sensei's divining top")
                     || cn.equals("splinter twin") || cn.equals("stony silence")
+                    || cn.equals("sunder")
                     || cn.equals("storm cauldron") || cn.equals("teferi's puzzle box")
+                    || cn.equals("tangle wire")
                     || cn.equals("teferi, mage of zhalfir") || cn.equals("teferi, mage of zhalfir")
                     || cn.equals("tezzeret the seeker") || cn.equals("time stretch")
                     || cn.equals("time warp") || cn.equals("training grounds")
@@ -643,7 +654,7 @@ public class Commander extends Constructed {
                     || cn.equals("workhorse") || cn.equals("worldgorger dragon")
                     || cn.equals("worthy cause") || cn.equals("yawgmoth's will")
                     || cn.equals("zealous conscripts")) {
-                thisMaxPower = Math.max(thisMaxPower, 7);
+                thisMaxPower = Math.max(thisMaxPower, 12);
                 numberInfinitePieces++;
             }
             edhPowerLevel += thisMaxPower;
@@ -657,6 +668,23 @@ public class Commander extends Constructed {
                 color = commander.getColor(null);
             } else {
                 color = color.union(commander.getColor(null));
+            }
+
+            FilterMana commanderColor = commander.getColorIdentity();
+            if (commanderColor.isWhite()) {
+                color.setWhite(true);
+            }
+            if (commanderColor.isBlue()) {
+                color.setBlue(true);
+            }
+            if (commanderColor.isBlack()) {
+                color.setBlack(true);
+            }
+            if (commanderColor.isRed()) {
+                color.setRed(true);
+            }
+            if (commanderColor.isGreen()) {
+                color.setGreen(true);
             }
 
             // Least fun commanders
@@ -710,7 +738,7 @@ public class Commander extends Constructed {
             edhPowerLevel += thisMaxPower;
         }
 
-        edhPowerLevel += numberInfinitePieces * 10;
+        edhPowerLevel += numberInfinitePieces * 12;
         edhPowerLevel = (int) Math.round(edhPowerLevel / 4.5);
         if (edhPowerLevel > 100) {
             edhPowerLevel = 100;

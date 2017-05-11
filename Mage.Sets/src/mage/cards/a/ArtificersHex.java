@@ -27,7 +27,6 @@
  */
 package mage.cards.a;
 
-import java.util.UUID;
 import mage.abilities.Ability;
 import mage.abilities.common.BeginningOfUpkeepTriggeredAbility;
 import mage.abilities.effects.OneShotEffect;
@@ -45,6 +44,8 @@ import mage.filter.predicate.mageobject.SubtypePredicate;
 import mage.game.Game;
 import mage.game.permanent.Permanent;
 import mage.target.TargetPermanent;
+
+import java.util.UUID;
 
 /**
  *
@@ -107,7 +108,7 @@ class ArtificersHexEffect extends OneShotEffect {
             Permanent equipment = game.getPermanent(enchantment.getAttachedTo());
             if (equipment != null && equipment.getAttachedTo() != null) {
                 Permanent creature = game.getPermanent(equipment.getAttachedTo());
-                if (creature != null && creature.getCardType().contains(CardType.CREATURE)) {
+                if (creature != null && creature.isCreature()) {
                     return creature.destroy(source.getSourceId(), game, false);
                 }
             }

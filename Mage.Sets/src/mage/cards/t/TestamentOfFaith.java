@@ -112,7 +112,7 @@ class TestamentOfFaithBecomesCreatureSourceEffect extends ContinuousEffectImpl i
                         if (!token.getCardType().isEmpty()) {
                             for (CardType t : token.getCardType()) {
                                 if (!permanent.getCardType().contains(t)) {
-                                    permanent.getCardType().add(t);
+                                    permanent.addCardType(t);
                                 }
                             }
                         }
@@ -150,7 +150,7 @@ class TestamentOfFaithBecomesCreatureSourceEffect extends ContinuousEffectImpl i
             }
             return true;
         } else {
-            if (duration.equals(Duration.Custom)) {
+            if (duration == Duration.Custom) {
                 this.discard();
             }
         }

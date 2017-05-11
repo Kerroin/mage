@@ -11,6 +11,7 @@ import mage.game.match.MatchType;
 import mage.game.permanent.PermanentCard;
 import mage.game.tournament.TournamentType;
 import mage.players.Player;
+import mage.players.PlayerType;
 import mage.server.game.GameFactory;
 import mage.server.game.PlayerFactory;
 import mage.server.tournament.TournamentFactory;
@@ -101,15 +102,15 @@ public abstract class MageTestBase {
         logger.info("Starting MAGE tests");
         logger.info("Logging level: " + logger.getLevel());
         deleteSavedGames();
-        ConfigSettings config = ConfigSettings.getInstance();
+        ConfigSettings config = ConfigSettings.instance;
         for (GamePlugin plugin : config.getGameTypes()) {
-            GameFactory.getInstance().addGameType(plugin.getName(), loadGameType(plugin), loadPlugin(plugin));
+            GameFactory.instance.addGameType(plugin.getName(), loadGameType(plugin), loadPlugin(plugin));
         }
         for (GamePlugin plugin : config.getTournamentTypes()) {
-            TournamentFactory.getInstance().addTournamentType(plugin.getName(), loadTournamentType(plugin), loadPlugin(plugin));
+            TournamentFactory.instance.addTournamentType(plugin.getName(), loadTournamentType(plugin), loadPlugin(plugin));
         }
         for (Plugin plugin : config.getPlayerTypes()) {
-            PlayerFactory.getInstance().addPlayerType(plugin.getName(), loadPlugin(plugin));
+            PlayerFactory.instance.addPlayerType(plugin.getName(), loadPlugin(plugin));
         }
 //        for (Plugin plugin : config.getDeckTypes()) {
 //            DeckValidatorFactory.getInstance().addDeckType(plugin.getName(), loadPlugin(plugin));
@@ -192,7 +193,7 @@ public abstract class MageTestBase {
     }
 
     private void parseLine(String line) {
-        if (parserState.equals(ParserState.EXPECTED)) {
+        if (parserState == ParserState.EXPECTED) {
             expectedResults.add(line); // just remember for future use
             return;
         }
@@ -248,7 +249,7 @@ public abstract class MageTestBase {
                         CardInfo cardInfo = CardRepository.instance.findCard(cardName);
                         Card card = cardInfo != null ? cardInfo.getCard() : null;
                         if (card != null) {
-                            if (gameZone.equals(Zone.BATTLEFIELD)) {
+                            if (gameZone == Zone.BATTLEFIELD) {
                                 PermanentCard p = new PermanentCard(card, null, currentGame);
                                 p.setTapped(tapped);
                                 perms.add(p);
@@ -289,8 +290,8 @@ public abstract class MageTestBase {
         }
     }
 
-    protected Player createPlayer(String name, String playerType) {
-        Optional<Player> playerOptional = PlayerFactory.getInstance().createPlayer(playerType, name, RangeOfInfluence.ALL, 5);
+    protected Player createPlayer(String name, PlayerType playerType) {
+        Optional<Player> playerOptional = PlayerFactory.instance.createPlayer(playerType, name, RangeOfInfluence.ALL, 5);
         return playerOptional.orElseThrow(() -> new NullPointerException("PlayerFactory error - player is not created"));
     }
 

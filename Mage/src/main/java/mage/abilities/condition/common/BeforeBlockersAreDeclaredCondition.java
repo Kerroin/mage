@@ -16,13 +16,9 @@ import mage.game.Game;
  *
  * @author LevelX2
  */
-public class BeforeBlockersAreDeclaredCondition implements Condition {
+public enum BeforeBlockersAreDeclaredCondition implements Condition {
 
-    private static final BeforeBlockersAreDeclaredCondition fInstance = new BeforeBlockersAreDeclaredCondition();
-
-    public static Condition getInstance() {
-        return fInstance;
-    }
+    instance;
 
     @Override
     public boolean apply(Game game, Ability source) {

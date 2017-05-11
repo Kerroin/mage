@@ -27,7 +27,6 @@
  */
 package mage.cards.d;
 
-import java.util.UUID;
 import mage.MageObject;
 import mage.abilities.Ability;
 import mage.abilities.LoyaltyAbility;
@@ -58,6 +57,8 @@ import mage.game.command.Emblem;
 import mage.players.Player;
 import mage.target.common.TargetControlledCreaturePermanent;
 import mage.target.common.TargetCreaturePermanent;
+
+import java.util.UUID;
 
 /**
  *
@@ -122,13 +123,13 @@ class DomriRadeEffect1 extends OneShotEffect {
     public boolean apply(Game game, Ability source) {
         Player controller = game.getPlayer(source.getControllerId());
         MageObject sourceObject = source.getSourceObject(game);
-        if (sourceObject != null && controller != null && controller.getLibrary().size() > 0) {
+        if (sourceObject != null && controller != null && controller.getLibrary().hasCards()) {
             Card card = controller.getLibrary().getFromTop(game);
             if (card != null) {
                 CardsImpl cards = new CardsImpl();
                 cards.add(card);
                 controller.lookAtCards(sourceObject.getName(), cards, game);
-                if (card.getCardType().contains(CardType.CREATURE)) {
+                if (card.isCreature()) {
                     if (controller.chooseUse(outcome, "Reveal " + card.getName() + " and put it into your hand?", source, game)) {
                         controller.moveCards(card, Zone.HAND, source, game);
                         controller.revealCards(sourceObject.getIdName(), cards, game);

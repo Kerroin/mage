@@ -40,6 +40,7 @@ import mage.abilities.keyword.VigilanceAbility;
 import mage.cards.CardImpl;
 import mage.cards.CardSetInfo;
 import mage.constants.CardType;
+import mage.constants.SuperType;
 import mage.constants.Zone;
 import mage.filter.FilterCard;
 import mage.filter.predicate.Predicates;
@@ -63,7 +64,7 @@ public class BrunaTheFadingLight extends CardImpl {
 
     public BrunaTheFadingLight(UUID ownerId, CardSetInfo setInfo) {
         super(ownerId,setInfo,new CardType[]{CardType.CREATURE},"{5}{W}{W}");
-        this.supertype.add("Legendary");
+        addSuperType(SuperType.LEGENDARY);
         this.subtype.add("Angel");
         this.subtype.add("Horror");
         this.power = new MageInt(5);
@@ -83,7 +84,7 @@ public class BrunaTheFadingLight extends CardImpl {
         this.addAbility(VigilanceAbility.getInstance());
 
         // <i>(Melds with Gisela, the Broken Blade.)</i>
-        this.addAbility(new SimpleStaticAbility(Zone.ALL, new InfoEffect("<i>(Melds with Gisela, the Broken Blade.)</i>")));
+        this.addAbility(new SimpleStaticAbility(Zone.ALL, new InfoEffect("(Melds with Gisela, the Broken Blade.)")));
     }
 
     public BrunaTheFadingLight(final BrunaTheFadingLight card) {

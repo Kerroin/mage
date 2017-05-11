@@ -28,7 +28,6 @@
 package mage.cards.k;
 
 import java.util.UUID;
-import mage.MageInt;
 import mage.MageObject;
 import mage.abilities.Ability;
 import mage.abilities.LoyaltyAbility;
@@ -54,7 +53,7 @@ import mage.filter.common.FilterLandPermanent;
 import mage.game.Game;
 import mage.game.command.Emblem;
 import mage.game.permanent.Permanent;
-import mage.game.permanent.token.Token;
+import mage.game.permanent.token.OctopusToken;
 import mage.players.Player;
 import mage.target.TargetCard;
 import mage.target.common.TargetCreaturePermanent;
@@ -158,10 +157,10 @@ class KioraRevealEffect extends OneShotEffect {
                 Card card = game.getCard(cardId);
                 if (card != null) {
                     cards.add(card);
-                    if (card.getCardType().contains(CardType.CREATURE)) {
+                    if (card.isCreature()) {
                         creatureCardFound = true;
                     }
-                    if (card.getCardType().contains(CardType.LAND)) {
+                    if (card.isLand()) {
                         landCardFound = true;
                     }
                 }
@@ -230,8 +229,8 @@ class KioraFightEffect extends OneShotEffect {
         Permanent target = game.getPermanent(source.getFirstTarget());
         if (triggeredCreature != null
                 && target != null
-                && triggeredCreature.getCardType().contains(CardType.CREATURE)
-                && target.getCardType().contains(CardType.CREATURE)) {
+                && triggeredCreature.isCreature()
+                && target.isCreature()) {
             triggeredCreature.fight(target, source, game);
             return true;
         }
@@ -241,18 +240,5 @@ class KioraFightEffect extends OneShotEffect {
     @Override
     public KioraFightEffect copy() {
         return new KioraFightEffect(this);
-    }
-}
-
-class OctopusToken extends Token {
-
-    public OctopusToken() {
-        super("Octopus", "8/8 blue Octopus creature token");
-        cardType.add(CardType.CREATURE);
-        color.setBlue(true);
-        subtype.add("Octopus");
-        power = new MageInt(8);
-        toughness = new MageInt(8);
-        this.setOriginalExpansionSetCode("BFZ");
     }
 }

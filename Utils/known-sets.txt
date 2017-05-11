@@ -23,6 +23,7 @@ Commander 2013 Edition|Commander2013|
 Commander 2014 Edition|Commander2014|
 Commander 2015|Commander2015|
 Commander 2016|Commander2016|
+Commander 2017|Commander2017|
 Commander Anthology|CommanderAnthology|
 Commander's Arsenal|CommandersArsenal|
 Conflux|Conflux|
@@ -86,8 +87,10 @@ Guru|Guru|
 Homelands|Homelands|
 Hour of Devastation|HourOfDevastation|
 Ice Age|IceAge|
+IconicMasters|IconicMasters|
 Innistrad|Innistrad|
 Invasion|Invasion|
+Ixalan|Ixalan|
 Journey into Nyx|JourneyIntoNyx|
 Judge Promo|JudgePromo|
 Judgment|Judgment|
@@ -110,6 +113,7 @@ Magic Player Rewards|MagicPlayerRewards|
 Magic: The Gathering-Commander|Commander|
 Magic: The Gathering-Conspiracy|Conspiracy|
 Masterpiece Series|MasterpieceSeries|
+Masterpiece Series Amonkhet|MasterpieceSeriesAmonkhet|
 Masters Edition|MastersEdition|
 Masters Edition II|MastersEditionII|
 Masters Edition III|MastersEditionIII|

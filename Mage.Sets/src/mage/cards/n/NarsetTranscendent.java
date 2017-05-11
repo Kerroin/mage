@@ -110,13 +110,13 @@ class NarsetTranscendentEffect1 extends OneShotEffect {
     public boolean apply(Game game, Ability source) {
         Player controller = game.getPlayer(source.getControllerId());
         MageObject sourceObject = source.getSourceObject(game);
-        if (sourceObject != null && controller != null && controller.getLibrary().size() > 0) {
+        if (sourceObject != null && controller != null && controller.getLibrary().hasCards()) {
             Card card = controller.getLibrary().getFromTop(game);
             if (card != null) {
                 CardsImpl cards = new CardsImpl();
                 cards.add(card);
                 controller.lookAtCards(sourceObject.getIdName(), cards, game);
-                if (!card.getCardType().contains(CardType.CREATURE) && !card.getCardType().contains(CardType.LAND)) {
+                if (!card.isCreature() && !card.isLand()) {
                     if (controller.chooseUse(outcome, "Reveal " + card.getLogName() + " and put it into your hand?", source, game)) {
                         controller.moveCards(card, Zone.HAND, source, game);
                         controller.revealCards(sourceObject.getIdName(), cards, game);
@@ -153,9 +153,9 @@ class NarsetTranscendentTriggeredAbility extends DelayedTriggeredAbility {
     public boolean checkTrigger(GameEvent event, Game game) {
         if (event.getPlayerId().equals(this.getControllerId())) {
             Spell spell = game.getStack().getSpell(event.getTargetId());
-            if (spell != null && spell.getFromZone().equals(Zone.HAND)) {
+            if (spell != null && spell.getFromZone() == Zone.HAND) {
                 if (spell.getCard() != null
-                        && spell.getCard().getCardType().contains(CardType.INSTANT) || spell.getCard().getCardType().contains(CardType.SORCERY)) {
+                        && spell.getCard().isInstant() || spell.getCard().isSorcery()) {
                     for (Effect effect : getEffects()) {
                         effect.setTargetPointer(new FixedTarget(spell.getId()));
                     }
@@ -272,7 +272,7 @@ class NarsetTranscendentCantCastEffect extends ContinuousRuleModifyingEffectImpl
         Player controller = game.getPlayer(source.getControllerId());
         if (controller != null && controller.hasOpponent(event.getPlayerId(), game)) {
             Card card = game.getCard(event.getSourceId());
-            if (card != null && !card.getCardType().contains(CardType.CREATURE)) {
+            if (card != null && !card.isCreature()) {
                 return true;
             }
         }

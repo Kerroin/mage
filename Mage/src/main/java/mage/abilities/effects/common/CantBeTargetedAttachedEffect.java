@@ -85,7 +85,7 @@ public class CantBeTargetedAttachedEffect extends ContinuousRuleModifyingEffectI
     public boolean applies(GameEvent event, Ability source, Game game) {
         Permanent attachment = game.getPermanent(source.getSourceId());
         if (attachment != null && event.getTargetId().equals(attachment.getAttachedTo())) {
-            if (targetController.equals(TargetController.OPPONENT)
+            if (targetController == TargetController.OPPONENT
                     && !game.getOpponents(source.getControllerId()).contains(event.getPlayerId())) {
                 return false;
             }
@@ -109,7 +109,7 @@ public class CantBeTargetedAttachedEffect extends ContinuousRuleModifyingEffectI
             return staticText;
         }
         StringBuilder sb = new StringBuilder();
-        sb.append(attachmentType.verb() + " creature");
+        sb.append(attachmentType.verb()).append(" creature");
         sb.append(" can't be the target of ");
         sb.append(filterSource.getMessage());
         if (!duration.toString().isEmpty()) {

@@ -33,21 +33,21 @@ import mage.abilities.Ability;
 import mage.abilities.common.ActivateIfConditionActivatedAbility;
 import mage.abilities.common.SimpleActivatedAbility;
 import mage.abilities.condition.common.PermanentsOnTheBattlefieldCondition;
-import mage.abilities.condition.common.PermanentsOnTheBattlefieldCondition.CountType;
 import mage.abilities.costs.common.TapSourceCost;
 import mage.abilities.costs.mana.ManaCostsImpl;
 import mage.abilities.effects.common.CreateTokenEffect;
 import mage.abilities.effects.common.TransformSourceEffect;
 import mage.abilities.keyword.FlyingAbility;
 import mage.abilities.keyword.TransformAbility;
-import mage.cards.l.LordOfLineage;
 import mage.cards.CardImpl;
 import mage.cards.CardSetInfo;
+import mage.cards.l.LordOfLineage;
 import mage.constants.CardType;
+import mage.constants.ComparisonType;
 import mage.constants.Zone;
 import mage.filter.common.FilterControlledPermanent;
 import mage.filter.predicate.mageobject.SubtypePredicate;
-import mage.game.permanent.token.Token;
+import mage.game.permanent.token.VampireToken;
 
 /**
  *
@@ -79,7 +79,7 @@ public class BloodlineKeeper extends CardImpl {
         Ability ability = new ActivateIfConditionActivatedAbility(Zone.BATTLEFIELD,
                 new TransformSourceEffect(true),
                 new ManaCostsImpl("{B}"),
-                new PermanentsOnTheBattlefieldCondition(filter, CountType.MORE_THAN, 4));
+                new PermanentsOnTheBattlefieldCondition(filter, ComparisonType.MORE_THAN, 4));
         this.addAbility(ability);
     }
 
@@ -92,16 +92,4 @@ public class BloodlineKeeper extends CardImpl {
         return new BloodlineKeeper(this);
     }
 
-}
-
-class VampireToken extends Token {
-    VampireToken() {
-        super("Vampire", "2/2 black Vampire creature token with flying");
-        cardType.add(CardType.CREATURE);
-        color.setBlack(true);
-        subtype.add("Vampire");
-        power = new MageInt(2);
-        toughness = new MageInt(2);
-        addAbility(FlyingAbility.getInstance());
-    }
 }

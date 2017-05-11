@@ -1,17 +1,16 @@
 package mage.sets;
 
-import mage.cards.ExpansionSet;
-import mage.constants.SetType;
-
-import mage.constants.Rarity;
 import mage.ObjectColor;
 import mage.cards.CardGraphicInfo;
+import mage.cards.ExpansionSet;
+import mage.constants.Rarity;
+import mage.constants.SetType;
 
 public class Onslaught extends ExpansionSet {
-    private static final Onslaught fINSTANCE = new Onslaught();
+    private static final Onslaught instance = new Onslaught();
 
     public static Onslaught getInstance() {
-        return fINSTANCE;
+        return instance;
     }
 
     private Onslaught() {
@@ -40,6 +39,7 @@ public class Onslaught extends ExpansionSet {
         cards.add(new SetCardInfo("Arcanis the Omnipotent", 66, Rarity.RARE, mage.cards.a.ArcanisTheOmnipotent.class));
         cards.add(new SetCardInfo("Ascending Aven", 68, Rarity.COMMON, mage.cards.a.AscendingAven.class));
         cards.add(new SetCardInfo("Astral Slide", 4, Rarity.UNCOMMON, mage.cards.a.AstralSlide.class));
+        cards.add(new SetCardInfo("Aura Extraction", 5, Rarity.UNCOMMON, mage.cards.a.AuraExtraction.class));
         cards.add(new SetCardInfo("Aurification", 6, Rarity.RARE, mage.cards.a.Aurification.class));
         cards.add(new SetCardInfo("Avarax", 187, Rarity.UNCOMMON, mage.cards.a.Avarax.class));
         cards.add(new SetCardInfo("Aven Brigadier", 7, Rarity.RARE, mage.cards.a.AvenBrigadier.class));
@@ -53,7 +53,7 @@ public class Onslaught extends ExpansionSet {
         cards.add(new SetCardInfo("Blackmail", 127, Rarity.UNCOMMON, mage.cards.b.Blackmail.class));
         cards.add(new SetCardInfo("Blatant Thievery", 71, Rarity.RARE, mage.cards.b.BlatantThievery.class));
         cards.add(new SetCardInfo("Blistering Firecat", 189, Rarity.RARE, mage.cards.b.BlisteringFirecat.class));
-	    cards.add(new SetCardInfo("Bloodline Shaman", 249, Rarity.UNCOMMON, mage.cards.b.BloodlineShaman.class));
+        cards.add(new SetCardInfo("Bloodline Shaman", 249, Rarity.UNCOMMON, mage.cards.b.BloodlineShaman.class));
         cards.add(new SetCardInfo("Bloodstained Mire", 313, Rarity.RARE, mage.cards.b.BloodstainedMire.class, new CardGraphicInfo(new ObjectColor("RB"), null,false)));
         cards.add(new SetCardInfo("Boneknitter", 128, Rarity.UNCOMMON, mage.cards.b.Boneknitter.class));
         cards.add(new SetCardInfo("Brightstone Ritual", 191, Rarity.COMMON, mage.cards.b.BrightstoneRitual.class));
@@ -175,6 +175,7 @@ public class Onslaught extends ExpansionSet {
         cards.add(new SetCardInfo("Krosan Colossus", 270, Rarity.RARE, mage.cards.k.KrosanColossus.class));
         cards.add(new SetCardInfo("Krosan Groundshaker", 271, Rarity.UNCOMMON, mage.cards.k.KrosanGroundshaker.class));
         cards.add(new SetCardInfo("Krosan Tusker", 272, Rarity.COMMON, mage.cards.k.KrosanTusker.class));
+        cards.add(new SetCardInfo("Lavamancer's Skill", 215, Rarity.COMMON, mage.cards.l.LavamancersSkill.class));
         cards.add(new SetCardInfo("Lay Waste", 216, Rarity.COMMON, mage.cards.l.LayWaste.class));
         cards.add(new SetCardInfo("Leery Fogbeast", 273, Rarity.COMMON, mage.cards.l.LeeryFogbeast.class));
         cards.add(new SetCardInfo("Lightning Rift", 217, Rarity.UNCOMMON, mage.cards.l.LightningRift.class));

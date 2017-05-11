@@ -30,8 +30,8 @@ package mage.sets;
 import mage.cards.ExpansionSet;
 import mage.cards.a.AesthirGlider;
 import mage.cards.e.EliteCatWarrior;
-import mage.constants.SetType;
 import mage.constants.Rarity;
+import mage.constants.SetType;
 
 /**
  *
@@ -40,10 +40,10 @@ import mage.constants.Rarity;
 
 public class MastersEditionIV extends ExpansionSet {
 
-    private static final MastersEditionIV fINSTANCE = new MastersEditionIV();
+    private static final MastersEditionIV instance = new MastersEditionIV();
 
     public static MastersEditionIV getInstance() {
-        return fINSTANCE;
+        return instance;
     }
 
     private MastersEditionIV() {

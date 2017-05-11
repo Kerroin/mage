@@ -28,7 +28,6 @@
 package mage.cards.c;
 
 import java.util.UUID;
-import mage.MageInt;
 import mage.abilities.Ability;
 import mage.abilities.common.SimpleActivatedAbility;
 import mage.abilities.common.SimpleStaticAbility;
@@ -51,7 +50,7 @@ import mage.filter.common.FilterControlledCreaturePermanent;
 import mage.filter.common.FilterControlledLandPermanent;
 import mage.filter.predicate.mageobject.SubtypePredicate;
 import mage.filter.predicate.permanent.TokenPredicate;
-import mage.game.permanent.token.Token;
+import mage.game.permanent.token.CaribouToken;
 import mage.target.TargetPermanent;
 import mage.target.common.TargetControlledCreaturePermanent;
 
@@ -96,17 +95,5 @@ public class CaribouRange extends CardImpl {
     @Override
     public CaribouRange copy() {
         return new CaribouRange(this);
-    }
-}
-
-class CaribouToken extends Token {
-
-    public CaribouToken() {
-        super("Caribou", "0/1 white Caribou creature token");
-        cardType.add(CardType.CREATURE);
-        color.setWhite(true);
-        subtype.add("Caribou");
-        power = new MageInt(0);
-        toughness = new MageInt(1);
     }
 }

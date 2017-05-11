@@ -29,7 +29,6 @@ package mage.watchers.common;
 
 import java.util.HashMap;
 import java.util.UUID;
-import mage.constants.CardType;
 import mage.constants.WatcherScope;
 import mage.game.Game;
 import mage.game.events.GameEvent;
@@ -46,7 +45,7 @@ public class CreaturesDiedWatcher extends Watcher {
     private final HashMap<UUID, Integer> amountOfCreaturesThatDiedByController = new HashMap<>();
 
     public CreaturesDiedWatcher() {
-        super("CreaturesDiedWatcher", WatcherScope.GAME);
+        super(CreaturesDiedWatcher.class.getSimpleName(), WatcherScope.GAME);
     }
 
     public CreaturesDiedWatcher(final CreaturesDiedWatcher watcher) {
@@ -59,7 +58,9 @@ public class CreaturesDiedWatcher extends Watcher {
     public void watch(GameEvent event, Game game) {
         if (event.getType() == GameEvent.EventType.ZONE_CHANGE) {
             ZoneChangeEvent zEvent = (ZoneChangeEvent) event;
-            if (zEvent.isDiesEvent() && zEvent.getTarget() != null && zEvent.getTarget().getCardType().contains(CardType.CREATURE)) {
+            if (zEvent.isDiesEvent()
+                    && zEvent.getTarget() != null
+                    && zEvent.getTarget().isCreature()) {
                 amountOfCreaturesThatDied++;
                 int amount = 0;
                 if (amountOfCreaturesThatDiedByController.containsKey(zEvent.getTarget().getControllerId())) {

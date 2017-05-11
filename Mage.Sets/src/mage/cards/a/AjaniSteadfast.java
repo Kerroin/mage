@@ -27,7 +27,6 @@
  */
 package mage.cards.a;
 
-import java.util.UUID;
 import mage.abilities.Ability;
 import mage.abilities.LoyaltyAbility;
 import mage.abilities.common.PlanswalkerEntersWithLoyalityCountersAbility;
@@ -57,6 +56,8 @@ import mage.game.command.Emblem;
 import mage.game.events.GameEvent;
 import mage.game.permanent.Permanent;
 import mage.target.common.TargetCreaturePermanent;
+
+import java.util.UUID;
 
 /**
  *
@@ -152,12 +153,12 @@ class AjaniSteadfastPreventEffect extends PreventionEffectImpl {
 
     @Override
     public boolean applies(GameEvent event, Ability source, Game game) {
-        if (event.getType().equals(GameEvent.EventType.DAMAGE_PLAYER)
+        if (event.getType() == GameEvent.EventType.DAMAGE_PLAYER
                 && event.getTargetId().equals(source.getControllerId())) {
             return super.applies(event, source, game);
         }
 
-        if (event.getType().equals(GameEvent.EventType.DAMAGE_PLANESWALKER)) {
+        if (event.getType() == GameEvent.EventType.DAMAGE_PLANESWALKER) {
             Permanent permanent = game.getPermanent(event.getTargetId());
             if (permanent != null && permanent.getControllerId().equals(source.getControllerId())) {
                 return super.applies(event, source, game);

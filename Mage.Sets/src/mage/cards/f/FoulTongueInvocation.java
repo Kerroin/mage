@@ -27,8 +27,6 @@
  */
 package mage.cards.f;
 
-import java.util.UUID;
-
 import mage.abilities.Ability;
 import mage.abilities.costs.common.RevealTargetFromHandCost;
 import mage.abilities.effects.OneShotEffect;
@@ -47,6 +45,8 @@ import mage.players.Player;
 import mage.target.TargetPlayer;
 import mage.target.common.TargetCardInHand;
 import mage.watchers.common.DragonOnTheBattlefieldWhileSpellWasCastWatcher;
+
+import java.util.UUID;
 
 /**
  *
@@ -76,7 +76,7 @@ public class FoulTongueInvocation extends CardImpl {
 
     @Override
     public void adjustCosts(Ability ability, Game game) {
-        if (ability.getAbilityType().equals(AbilityType.SPELL)) {
+        if (ability.getAbilityType() == AbilityType.SPELL) {
             Player controller = game.getPlayer(ability.getControllerId());
             if (controller != null) {
                 if (controller.getHand().count(filter, game) > 0) {
@@ -116,7 +116,7 @@ class FoulTongueInvocationEffect extends OneShotEffect {
     public boolean apply(Game game, Ability source) {
         Player controller = game.getPlayer(source.getControllerId());
         if (controller != null) {
-            DragonOnTheBattlefieldWhileSpellWasCastWatcher watcher = (DragonOnTheBattlefieldWhileSpellWasCastWatcher) game.getState().getWatchers().get("DragonOnTheBattlefieldWhileSpellWasCastWatcher");
+            DragonOnTheBattlefieldWhileSpellWasCastWatcher watcher = (DragonOnTheBattlefieldWhileSpellWasCastWatcher) game.getState().getWatchers().get(DragonOnTheBattlefieldWhileSpellWasCastWatcher.class.getSimpleName());
             if (watcher != null && watcher.castWithConditionTrue(source.getId())) {
                 controller.gainLife(4, game);
             }

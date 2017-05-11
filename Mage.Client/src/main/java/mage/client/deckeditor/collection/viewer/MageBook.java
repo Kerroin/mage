@@ -44,6 +44,7 @@ import mage.client.util.NaturalOrderCardNumberComparator;
 import mage.client.util.audio.AudioManager;
 import mage.client.util.sets.ConstructedFormats;
 import mage.components.ImagePanel;
+import mage.components.ImagePanelStyle;
 import mage.constants.Rarity;
 import mage.view.CardView;
 import org.apache.log4j.Logger;
@@ -56,9 +57,17 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
+import mage.game.permanent.PermanentToken;
+import mage.game.permanent.token.Token;
+import mage.view.PermanentView;
+import org.mage.plugins.card.images.CardDownloadData;
+import static org.mage.plugins.card.images.DownloadPictures.getTokenCardUrls;
 
 /**
  * Mage book with cards and page flipping.
@@ -89,12 +98,12 @@ public class MageBook extends JComponent {
         setMinimumSize(new Dimension(conf.WIDTH, conf.HEIGHT));
         //setBorder(BorderFactory.createLineBorder(Color.green));
 
-        jPanelLeft = getImagePanel(LEFT_PANEL_IMAGE_PATH, ImagePanel.TILED);
+        jPanelLeft = getImagePanel(LEFT_PANEL_IMAGE_PATH, ImagePanelStyle.TILED);
         jPanelLeft.setPreferredSize(new Dimension(LEFT_RIGHT_PAGES_WIDTH, 0));
         jPanelLeft.setLayout(null);
-        jPanelCenter = getImagePanel(CENTER_PANEL_IMAGE_PATH, ImagePanel.SCALED);
+        jPanelCenter = getImagePanel(CENTER_PANEL_IMAGE_PATH, ImagePanelStyle.SCALED);
         jPanelCenter.setLayout(new BorderLayout());
-        jPanelRight = getImagePanel(RIGHT_PANEL_IMAGE_PATH, ImagePanel.TILED);
+        jPanelRight = getImagePanel(RIGHT_PANEL_IMAGE_PATH, ImagePanelStyle.TILED);
         jPanelRight.setPreferredSize(new Dimension(LEFT_RIGHT_PAGES_WIDTH, 0));
         jPanelRight.setLayout(null);
 
@@ -112,7 +121,7 @@ public class MageBook extends JComponent {
             }
             pageRight.setVisible(true);
             AudioManager.playPrevPage();
-            showCards();
+            showCardsOrTokens();
         });
 
         image = ImageHelper.loadImage(RIGHT_PAGE_BUTTON_IMAGE_PATH);
@@ -124,7 +133,7 @@ public class MageBook extends JComponent {
             pageLeft.setVisible(true);
             pageRight.setVisible(false);
             AudioManager.playNextPage();
-            showCards();
+            showCardsOrTokens();
         });
 
         addSetTabs();
@@ -169,7 +178,7 @@ public class MageBook extends JComponent {
             final String _set = set;
             final int _index = count;
             tab.setObserver(() -> {
-                if (!currentSet.equals(_set) || currentPage != 0) {
+                if (!currentSet.equals(_set) || currentPage != 0 || stateChanged) {
                     AudioManager.playAnotherTab();
                     synchronized (MageBook.this) {
                         selectedTab = _index;
@@ -179,7 +188,7 @@ public class MageBook extends JComponent {
                     pageLeft.setVisible(false);
                     pageRight.setVisible(false);
                     addSetTabs();
-                    showCards();
+                    showCardsOrTokens();
                 }
             });
             tabs.add(tab);
@@ -199,6 +208,15 @@ public class MageBook extends JComponent {
         if (currentTab != null) {
             currentTab.drawSet();
             currentTab.repaint();
+        }
+    }
+
+    private void showCardsOrTokens() {
+        stateChanged = false;
+        if (showCardsOrTokens) {
+            showCards();
+        } else {
+            showTokens();
         }
     }
 
@@ -231,17 +249,48 @@ public class MageBook extends JComponent {
         jLayeredPane.repaint();
     }
 
+    public void showTokens() {
+        jLayeredPane.removeAll();
+        addLeftRightPageButtons();
+
+        List<Token> tokens = getTokens(currentPage, currentSet);
+        int size = tokens.size();
+        
+        if (tokens != null && tokens.size() > 0) {
+            Rectangle rectangle = new Rectangle();
+            rectangle.translate(OFFSET_X, OFFSET_Y);
+            for (int i = 0; i < Math.min(conf.CARDS_PER_PAGE / 2, size); i++) {
+                Token token = tokens.get(i);
+                addToken(token, bigCard, null, rectangle);
+                rectangle = CardPosition.translatePosition(i, rectangle, conf);
+            }
+
+            // calculate the x offset of the second (right) page
+            int second_page_x = (conf.WIDTH - 2 * LEFT_RIGHT_PAGES_WIDTH)
+                    - (cardDimensions.frameWidth + CardPosition.GAP_X) * conf.CARD_COLUMNS + CardPosition.GAP_X - OFFSET_X;
+
+            rectangle.setLocation(second_page_x, OFFSET_Y);
+            for (int i = conf.CARDS_PER_PAGE / 2; i < Math.min(conf.CARDS_PER_PAGE, size); i++) {
+                Token token = tokens.get(i);
+                addToken(token, bigCard, null, rectangle);
+                rectangle = CardPosition.translatePosition(i - conf.CARDS_PER_PAGE / 2, rectangle, conf);
+            }
+
+            jLayeredPane.repaint();
+        }
+    }
+
     private void addCard(CardView card, BigCard bigCard, UUID gameId, Rectangle rectangle) {
         if (cardDimension == null) {
             cardDimension = new Dimension(Config.dimensions.frameWidth, Config.dimensions.frameHeight);
         }
-        final MageCard cardImg = Plugins.getInstance().getMageCard(card, bigCard, cardDimension, gameId, true, true);
+        final MageCard cardImg = Plugins.instance.getMageCard(card, bigCard, cardDimension, gameId, true, true);
         cardImg.setBounds(rectangle);
         jLayeredPane.add(cardImg, JLayeredPane.DEFAULT_LAYER, 10);
         cardImg.update(card);
         cardImg.setCardBounds(rectangle.x, rectangle.y, cardDimensions.frameWidth, cardDimensions.frameHeight);
 
-        boolean implemented = !card.getRarity().equals(Rarity.NA);
+        boolean implemented = card.getRarity() != Rarity.NA;
 
         GlowText label = new GlowText();
         label.setGlow(implemented ? Color.green : NOT_IMPLEMENTED, 12, 0.0f);
@@ -249,6 +298,20 @@ public class MageBook extends JComponent {
         int dx = implemented ? 15 : 5;
         label.setBounds(rectangle.x + dx, rectangle.y + cardDimensions.frameHeight + 7, 110, 30);
         jLayeredPane.add(label);
+    }
+
+    private void addToken(Token token, BigCard bigCard, UUID gameId, Rectangle rectangle) {
+        if (cardDimension == null) {
+            cardDimension = new Dimension(Config.dimensions.frameWidth, Config.dimensions.frameHeight);
+        }
+        PermanentToken newToken = new PermanentToken(token, null, token.getOriginalExpansionSetCode(), null);
+        PermanentView theToken = new PermanentView(newToken, null, null, null);
+        theToken.setInViewerOnly(true);
+        final MageCard cardImg = Plugins.instance.getMagePermanent(theToken, bigCard, cardDimension, gameId, true);
+        cardImg.setBounds(rectangle);
+        jLayeredPane.add(cardImg, JLayeredPane.DEFAULT_LAYER, 10);
+        cardImg.update(theToken);
+        cardImg.setCardBounds(rectangle.x, rectangle.y, cardDimensions.frameWidth, cardDimensions.frameHeight);
     }
 
     private List<CardInfo> getCards(int page, String set) {
@@ -267,7 +330,56 @@ public class MageBook extends JComponent {
         return cards.subList(start, end);
     }
 
-    private ImagePanel getImagePanel(String filename, int type) {
+    private List<Token> getTokens(int page, String set) {
+        ArrayList<CardDownloadData> allTokens = getTokenCardUrls();
+        ArrayList<Token> tokens = new ArrayList<>();
+        
+        for (CardDownloadData token : allTokens) {
+            if (token.getSet().equals(set)) {
+                try {
+                    String className = token.getName();
+                    className = className.replaceAll("[^a-zA-Z0-9]", "");
+                    className = className + "Token";
+                    if (token.getTokenClassName() != null && token.getTokenClassName().length() > 0) {
+                        className = token.getTokenClassName();
+                    }
+                    Class<?> c = Class.forName("mage.game.permanent.token." + className);
+                    Constructor<?> cons = c.getConstructor();
+                    Object newToken = cons.newInstance();
+                    if (newToken != null && newToken instanceof mage.game.permanent.token.Token) {
+                        ((Token) newToken).setExpansionSetCodeForImage(set);
+                        ((Token) newToken).setOriginalExpansionSetCode(set);
+                        tokens.add((Token) newToken);
+                    }
+                } catch (ClassNotFoundException ex) {
+                    // Swallow exception
+                } catch (NoSuchMethodException ex) {
+                    // Swallow exception
+                } catch (SecurityException ex) {
+                    // Swallow exception
+                } catch (InstantiationException ex) {
+                    // Swallow exception
+                } catch (IllegalAccessException ex) {
+                    // Swallow exception
+                } catch (IllegalArgumentException ex) {
+                    // Swallow exception
+                } catch (InvocationTargetException ex) {
+                    // Swallow exception
+                }
+            }
+        }
+        int start = page * conf.CARDS_PER_PAGE;
+        int end = page * conf.CARDS_PER_PAGE + conf.CARDS_PER_PAGE;
+        if (end > tokens.size()) {
+            end = tokens.size();
+        }
+        if (tokens.size() > end) {
+            pageRight.setVisible(true);
+        }
+        return tokens.subList(start, end);
+    }
+
+    private ImagePanel getImagePanel(String filename, ImagePanelStyle type) {
         try {
             InputStream is = this.getClass().getResourceAsStream(filename);
 
@@ -315,6 +427,15 @@ public class MageBook extends JComponent {
             if (selectedTab < 0) {
                 selectedTab = tabs.size() - 1;
             }
+            tabs.get(selectedTab).execute();
+        }
+    }
+
+    public void cardsOrTokens(boolean showCards) {
+        synchronized (this) {
+            selectedTab = 0;
+            showCardsOrTokens = !showCardsOrTokens;
+            stateChanged = true;
             tabs.get(selectedTab).execute();
         }
     }
@@ -414,6 +535,8 @@ public class MageBook extends JComponent {
     private java.util.List<String> setsToDisplay = new ArrayList<>();
     private final java.util.List<HoverButton> tabs = new ArrayList<>();
     private int selectedTab;
+    private boolean showCardsOrTokens = true;
+    private boolean stateChanged = false;
 
     private static final String CENTER_PANEL_IMAGE_PATH = "/book_bg.jpg";
     private static final String RIGHT_PANEL_IMAGE_PATH = "/book_right.jpg";
